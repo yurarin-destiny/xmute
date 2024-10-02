@@ -1,0 +1,20 @@
+{
+	"name": "非表示発射のド迫力X",
+	"version": "1.0",
+	"manifest_version": 3,
+	"description": "X（Twitter）のタイムライン、検索画面で指定したワード、正規表現を非表示にします。",
+	"content_scripts": [
+		{
+			"matches": ["https://x.com/*"],
+			"js": ["content.js"]
+		}
+	],
+	"permissions": ["storage", "activeTab", "contextMenus"],
+	"icons": { "128": "128.png" },
+	"options_page": "option.html",
+	"action": { "default_popup": "popup.html" },
+	"background": {
+		"service_worker": "background.js"
+	},
+	"author": "yurarin_destiny"
+}

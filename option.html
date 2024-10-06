@@ -24,7 +24,7 @@
             padding-bottom: 15px;
             margin-bottom: 20px;
         }
-        .del {
+        .del, .del2 {
             margin-left: 10px;
             padding-left: 10px;
             padding-right: 10px;
@@ -32,19 +32,26 @@
         #interval { margin-left: 10px; margin-right: 5px; width: 80px;}
         label { cursor: pointer; }
         .right { text-align: right; }
+        #loadtx { display: none;}
+        .loadtx { text-decoration: underline; color: #0000FF;}
     </style>
 </head>
 <body>
     <h2>非表示一覧のド迫力X</h2>
     <p id="info"></p>
     <div id="flexbox"></div>
+    <div id="user" class="flex-item"></div>
     <div class="flex-item">
-        2: オプション<br><br>
+        3: オプション<br><br>
         更新間隔<input type="number" id="interval" min="100">ミリ秒<br>
         <label><input type="checkbox" id="checknameng">
         検索単語が名前に含まれるツイートを非表示</label><br>
         <button id="save">保存</button>
     </div>
+    <a id="savetx" href="#">設定をテキストファイルで保存</a>　
+    <span class="loadtx"><label>
+        <input id="loadtx" type="file" accept=".txt">設定をテキストファイルで読み込み
+    </label></span><br>    
     <script src="option.js"></script>
 </body>
 </html>

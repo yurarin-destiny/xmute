@@ -1,6 +1,6 @@
 {
 	"name": "非表示発射のド迫力X",
-	"version": "1.0",
+	"version": "1.0.2",
 	"manifest_version": 3,
 	"description": "X（Twitter）のタイムライン、検索画面で指定したワード、正規表現を非表示にします。",
 	"content_scripts": [

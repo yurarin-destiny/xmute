@@ -1,31 +1,30 @@
-const info = document.getElementById("info");
-const flexbox = document.getElementById("flexbox");
-const dels = document.getElementsByClassName("del");
-const del2s = document.getElementsByClassName("del2");
-const atags = document.getElementsByTagName("a");
-const user = document.getElementById("user");
-const intervaltx = document.getElementById("interval");
-const checknameng = document.getElementById("checknameng");
-const save = document.getElementById("save");
-const savetx = document.getElementById("savetx");
-const loadtx = document.getElementById("loadtx");
-let data;
-let userdata;
-let optiondata;
+const info = document.getElementById("info"),
+	flexbox = document.getElementById("flexbox"),
+	dels = document.getElementsByClassName("del"),
+	del2s = document.getElementsByClassName("del2"),
+	atags = document.getElementsByTagName("a"),
+	user = document.getElementById("user"),
+	intervaltx = document.getElementById("interval"),
+	checknameng = document.getElementById("checknameng"),
+	save = document.getElementById("save"),
+	savetx = document.getElementById("savetx"),
+	loadtx = document.getElementById("loadtx");
+let data,
+	userdata,
+	optiondata;
 
 // chrome.storage.sync 1kb 18lines, 8kb 144lines, 100kb, 1800lines
 
 comparetime = rec => {
 	if (!rec) return "none";
-	const r_year = rec.substring(0, 4);
-	const r_month = rec.substring(5, 7);
-	const r_day = rec.substring(8, 10);
-	const r_hour = rec.substring(11, 13);
-	const r_min = rec.substring(14, 16);
-	const r_sec = rec.substring(17, 19);
-
-	const rectime = new Date(r_year, r_month - 1, r_day, r_hour, r_min, r_sec);
-	const now = new Date();
+	const r_year = rec.substring(0, 4),
+		r_month = rec.substring(5, 7),
+		r_day = rec.substring(8, 10),
+		r_hour = rec.substring(11, 13),
+		r_min = rec.substring(14, 16),
+		r_sec = rec.substring(17, 19),
+		rectime = new Date(r_year, r_month - 1, r_day, r_hour, r_min, r_sec),
+		now = new Date();
 	if (rectime > now) return "future";
 	else return "past";
 };
@@ -42,7 +41,7 @@ write = async () => {
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata: userdata });
 	
-	info.innerText = `登録ワード数: ${data.length}`;
+	info.innerText = `登録ワード数: ${data.length}　登録ユーザー数: ${userdata.length}`;
 	flexbox.innerHTML = "";
 	
 	let res = '<div class="flex-item">1: 非表示ワード<br><br>';
@@ -79,14 +78,33 @@ write = async () => {
 		};
 	}
 	
-	let res2 = "2: リポスト非表示ユーザー<br><br>";
+	let res2 = "2: 一部ポスト表示ユーザー<br><br>";
 	if (userdata.length == 0) {
 		user.innerHTML = res2 + "登録されていません";
 	} else {
 		userdata.forEach((d, i) => {
 			console.log(d);
 			res2 += "@"+d.name;
-			if (d.sta == "rponly") res2 += ` (リポスト以外非表示)`;
+			switch (d.sta) {
+				case "rponly":
+					res2 += " (リポストのみ表示)";
+					break;
+				case "rpexcept":
+					res2 += " (リポスト以外表示)";
+					break;
+				case "mediaonly":
+					res2 += " (メディアポストのみ表示)";
+					break;
+				case "mediaexcept":
+					res2 += " (メディアポスト以外表示)";
+					break;
+				case "worddelete":
+					res2 += " (文章削除＆メディアのみ表示)";
+					break;
+				case "mediadelete":
+					res2 += " (メディア削除＆文章のみ表示)";
+					break;
+			}
 			if (d.limit) res2 += ` (${d.limit}まで)`;
 			res2 += `<button class="del2" value="${i}">削除</button><br>`;
 		})
@@ -95,7 +113,7 @@ write = async () => {
 				</div>`;
 		user.innerHTML = res2;
 		atags[1].onclick = () => {
-			if (confirm(`非表示ユーザーをすべて削除します`)) {
+			if (confirm(`一部表示ユーザーをすべて削除します`)) {
 				userdata = [];
 				set();
 				write();
@@ -129,8 +147,8 @@ save.onclick = async () => {
 }
 
 savetx.onclick = () => {
-	let text = [data, userdata, optiondata];
-	let blob = new Blob([JSON.stringify(text)], { type: "text/plain" });
+	let text = [data, userdata, optiondata],
+		blob = new Blob([JSON.stringify(text)], { type: "text/plain" });
 	savetx.href = URL.createObjectURL(blob);
 	savetx.download = "setting.txt";
 }
@@ -156,7 +174,7 @@ reader.onload = async () => {
 	
 	if (confirm(
 		"以下の設定を読み込みます。\n\n" +
-		`登録ワード数: ${file[0].length}、 登録リポストユーザー数: ${file[1].length}\n` +
+		`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
 		`更新間隔: ${file[2].interval}ミリ秒、 検索単語名前非表示: ${searchbool}`)
 	) {
 		await chrome.storage.local.set({ key: file[0] });

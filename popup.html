@@ -5,10 +5,12 @@
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<style>
-		body { padding-left: 10px;}
+		body { padding-left: 10px; }
 		button { width: 100px; }
 		label { cursor: pointer; }
 		input#lim { width: 60px; }
+		p { white-space: nowrap; }
+		select { margin-bottom: 3px; }
 	</style>
 </head>
 
@@ -22,8 +24,15 @@
 	</p>
 	<p>
 		<label>
-		<input type="radio" name="radio" value="user">リポスト非表示ユーザーID　</label>
-		<label><input type="checkbox" id="checkrp"> リポストのみ表示</label><br />
+		<input type="radio" name="radio" value="user">一部表示ユーザーID　</label>
+		<select id="select">
+			<option value="rponly">リポストのみ表示</option>
+			<option value="rpexcept">リポスト以外表示</option>
+			<option value="mediaonly">メディアポストのみ表示</option>
+			<option value="mediaexcept">メディアポスト以外表示</option>
+			<option value="worddelete">文章削除＆メディアのみ表示</option>
+			<option value="mediadelete">メディア削除＆文章のみ表示</option>
+		</select><br>
 		@ <input type="text" id="newuser" size="35" disabled/>
 	</p>
 	<p><label><input type="checkbox" id="checklim">期限設定　</label>

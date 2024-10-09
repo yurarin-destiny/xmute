@@ -9,7 +9,14 @@ initialize = async () => {
 }
 
 chrome.runtime.onInstalled.addListener(async () => {
-	const optiondata = { interval: 1000, searchnameng: true };
+	const data = (await chrome.storage.local.get("key")).key || [],
+		userdata = (await chrome.storage.local.get("userdata")).userdata || [],
+		optiondata = (await chrome.storage.local.get("option")).option || {
+			interval: 500,
+			searchnameng: true,
+		};
+	await chrome.storage.local.set({ key: data });
+	await chrome.storage.local.set({ userdata: userdata });
 	await chrome.storage.local.set({ option: optiondata });
 	chrome.storage.local.remove("select");
 	initialize();

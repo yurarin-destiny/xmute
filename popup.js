@@ -11,7 +11,8 @@ const radio = document.getElementsByName("radio"),
 let limi = "",
 	res = "",
 	data,
-	userdata;
+	userdata,
+	change = false;
 
 chrome.storage.local.get("select", d => (newword.value = d.select || ""));
 
@@ -57,11 +58,13 @@ get = (async () => {
 		登録ユーザー数: ${userdata.length}`;
 })();
 radio[0].onchange = () => {
+	newword.value = newuser.value;
 	newuser.value = "";
 	newuser.disabled = true;
 	newword.disabled = false;
 };
 radio[1].onchange = () => {
+	newuser.value = newword.value;
 	newword.value = "";
 	newuser.disabled = false;
 	newword.disabled = true;
@@ -111,6 +114,8 @@ btn1.onclick = async () => {
 		} else res += `期限： なし`;
 		data.push({ word: val, regex: checkreg.checked, limit: limi });
 		await chrome.storage.local.set({ key: data });
+		change = true;
+		chrome.storage.local.set({ select: "" });
 	} else {
 		// ユーザーモード
 		newuser.value = newuser.value.replace("@", "");
@@ -156,8 +161,22 @@ btn1.onclick = async () => {
 
 		userdata.push({ name: val, limit: limi, sta: select.value });
 		await chrome.storage.local.set({ userdata: userdata });
+		change = true;
+		chrome.storage.local.set({ select: "" });
 	}
 	info.innerHTML = res;
 	
 };
 btn2.onclick = () => chrome.runtime.openOptionsPage();
+
+document.onvisibilitychange = () => {
+	chrome.tabs.query({}, tabs => {
+		for (t of tabs) {
+			if (t.url && change) {
+				if (t.url.includes("https://x.com")) {
+					chrome.tabs.reload(t.id);
+				}
+			}
+		}
+	});
+};

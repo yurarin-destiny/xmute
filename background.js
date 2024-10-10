@@ -24,6 +24,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 
 chrome.contextMenus.onClicked.addListener(info => {
 	const select = info.selectionText; // 選択されたテキストを取得
-	chrome.action.openPopup(); // ポップアップを開くためにアクションをトリガー
 	chrome.storage.local.set({ select });
+	chrome.action.openPopup(); // ポップアップを開くためにアクションをトリガー
 });

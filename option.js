@@ -11,7 +11,9 @@ const info = document.getElementById("info"),
 	loadtx = document.getElementById("loadtx");
 let data,
 	userdata,
-	optiondata;
+	optiondata,
+	change = false,
+	tid;
 
 // chrome.storage.sync 1kb 18lines, 8kb 144lines, 100kb, 1800lines
 
@@ -31,6 +33,7 @@ comparetime = rec => {
 set = async () => {
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata: userdata });
+	changefun();
 }
 
 write = async () => {
@@ -143,7 +146,8 @@ save.onclick = async () => {
 	optiondata = { interval: intervaltx.value, searchnameng: checknameng.checked };
 	await chrome.storage.local.set({ option: optiondata });
 	write();
-	alert("保存しました");
+	changefun();
+	alert("保存しました")
 }
 
 savetx.onclick = () => {
@@ -183,4 +187,21 @@ reader.onload = async () => {
 		write();
 	}
 }
+changefun = () => {
+	change = true;
+	chrome.tabs.query({}, tabs => {
+		for (t of tabs) {
+			if (t.url) {
+				if (t.url.includes("https://x.com")) {
+					tid = t.id;
+				}
+			}
+		}
+	});
+}
+document.onvisibilitychange = () => {
+	if (change) {
+		chrome.tabs.reload(tid);
+	}
+};
 write();

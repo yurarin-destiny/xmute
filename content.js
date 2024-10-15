@@ -6,7 +6,7 @@ const tweets = document.getElementsByClassName("r-qklmqi"),
 let url = new URL(location.href),
 	query = new URLSearchParams(location.search).get("q");
 
-comparetime = rec => {
+const comparetime = rec => {
 	if (!rec) return "none";
 	const r_year = rec.substring(0, 4),
 		r_month = rec.substring(5, 7),
@@ -17,10 +17,10 @@ comparetime = rec => {
 		rectime = new Date(r_year, r_month - 1, r_day, r_hour, r_min, r_sec),
 		now = new Date();
 	if (rectime > now) return "future";
-		else return "past";
+	else return "past";
 };
 
-onload = async () => {
+const onload = async () => {
 	let data = (await chrome.storage.local.get("key")).key,
 		userdata = (await chrome.storage.local.get("userdata")).userdata;
 	const optiondata = (await chrome.storage.local.get("option")).option;
@@ -60,7 +60,7 @@ onload = async () => {
 		}
 		if (url.pathname == "/search" && optiondata.searchnameng) {
 			for (let n of names) {
-				if (n.textContent.replace(" ", "").includes(query)) {
+				if (n.textContent.replace(/[\s・]/, "").includes(query)) {
 					n.closest(".r-qklmqi").remove();
 					console.log("名前削除: " + query);
 				}
@@ -137,6 +137,6 @@ onload = async () => {
 		}
 		url = new URL(location.href);
 	}, optiondata.interval);
-	
+
 	console.log(`更新間隔： ${optiondata.interval}ミリ秒`);
 };

@@ -6,6 +6,7 @@ const info = document.getElementById("info"),
 	user = document.getElementById("user"),
 	intervaltx = document.getElementById("interval"),
 	checknameng = document.getElementById("checknameng"),
+	checkreflesh = document.getElementById("checkreflesh"),
 	save = document.getElementById("save"),
 	savetx = document.getElementById("savetx"),
 	loadtx = document.getElementById("loadtx");
@@ -17,7 +18,7 @@ let data,
 
 // chrome.storage.sync 1kb 18lines, 8kb 144lines, 100kb, 1800lines
 
-comparetime = rec => {
+const comparetime = rec => {
 	if (!rec) return "none";
 	const r_year = rec.substring(0, 4),
 		r_month = rec.substring(5, 7),
@@ -30,23 +31,23 @@ comparetime = rec => {
 	if (rectime > now) return "future";
 	else return "past";
 };
-set = async () => {
+const set = async () => {
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata: userdata });
 	changefun();
-}
+};
 
-write = async () => {
+const write = async () => {
 	data = (await chrome.storage.local.get("key")).key;
 	userdata = (await chrome.storage.local.get("userdata")).userdata;
 	data = data.filter(d => comparetime(d.limit) != "past");
 	userdata = userdata.filter(d => comparetime(d.limit) != "past");
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata: userdata });
-	
+
 	info.innerText = `登録ワード数: ${data.length}　登録ユーザー数: ${userdata.length}`;
 	flexbox.innerHTML = "";
-	
+
 	let res = '<div class="flex-item">1: 非表示ワード<br><br>';
 	if (data.length == 0) {
 		flexbox.innerHTML = res + "登録されていません";
@@ -62,16 +63,16 @@ write = async () => {
 				</div>`;
 
 		flexbox.insertAdjacentHTML("beforeend", res);
-		
+
 		atags[0].onclick = () => {
 			if (confirm(`NGワードをすべて削除します`)) {
 				data = [];
 				set();
 				write();
 			}
-		}
+		};
 	}
-	for (let i in dels){
+	for (let i in dels) {
 		dels[i].onclick = () => {
 			if (confirm(`${data[i].word}を削除します`)) {
 				data.splice(i, 1);
@@ -80,14 +81,14 @@ write = async () => {
 			}
 		};
 	}
-	
+
 	let res2 = "2: 一部ポスト表示ユーザー<br><br>";
 	if (userdata.length == 0) {
 		user.innerHTML = res2 + "登録されていません";
 	} else {
 		userdata.forEach((d, i) => {
 			console.log(d);
-			res2 += "@"+d.name;
+			res2 += "@" + d.name;
 			switch (d.sta) {
 				case "rponly":
 					res2 += " (リポストのみ表示)";
@@ -110,7 +111,7 @@ write = async () => {
 			}
 			if (d.limit) res2 += ` (${d.limit}まで)`;
 			res2 += `<button class="del2" value="${i}">削除</button><br>`;
-		})
+		});
 		res2 += `<div class="right">
 				<a href="#">${userdata.length}件すべて削除</a></div>
 				</div>`;
@@ -132,18 +133,23 @@ write = async () => {
 			}
 		};
 	}
-	
+
 	optiondata = (await chrome.storage.local.get("option")).option;
 	intervaltx.value = optiondata.interval;
 	checknameng.checked = optiondata.searchnameng;
-}
+	checkreflesh.checked = optiondata.reflesh;
+};
 
 intervaltx.onchange = () => {
 	intervaltx.value = Math.round(intervaltx.value);
 	if (intervaltx.value < 100) intervaltx.value = 100;
 }
 save.onclick = async () => {
-	optiondata = { interval: intervaltx.value, searchnameng: checknameng.checked };
+	optiondata = {
+		interval: intervaltx.value,
+		searchnameng: checknameng.checked,
+		reflesh: checkreflesh.checked
+	};
 	await chrome.storage.local.set({ option: optiondata });
 	write();
 	changefun();
@@ -187,7 +193,7 @@ reader.onload = async () => {
 		write();
 	}
 }
-changefun = () => {
+const changefun = () => {
 	change = true;
 	chrome.tabs.query({}, tabs => {
 		for (t of tabs) {
@@ -198,9 +204,9 @@ changefun = () => {
 			}
 		}
 	});
-}
+};
 document.onvisibilitychange = () => {
-	if (change) {
+	if (change && optiondata.reflesh) {
 		chrome.tabs.reload(tid);
 	}
 };

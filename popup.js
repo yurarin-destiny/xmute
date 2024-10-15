@@ -12,11 +12,12 @@ let limi = "",
 	res = "",
 	data,
 	userdata,
-	change = false;
+	change = false,
+	reflesh = true;
 
 chrome.storage.local.get("select", d => (newword.value = d.select || ""));
 
-gettime = p => {
+const gettime = p => {
 	let now = new Date();
 	now.setDate(now.getDate() + Number(p));
 	let y = now.getFullYear(),
@@ -34,26 +35,27 @@ gettime = p => {
 
 	return `${y}.${M}.${d} ${h}:${m}:${s}`;
 };
-comparetime = rec => {
+const comparetime = rec => {
 	if (!rec) return "none";
-		const r_year = rec.substring(0, 4),
-			r_month = rec.substring(5, 7),
-			r_day = rec.substring(8, 10),
-			r_hour = rec.substring(11, 13),
-			r_min = rec.substring(14, 16),
-			r_sec = rec.substring(17, 19),
-			rectime = new Date(r_year, r_month - 1, r_day, r_hour, r_min, r_sec),
-			now = new Date();
+	const r_year = rec.substring(0, 4),
+		r_month = rec.substring(5, 7),
+		r_day = rec.substring(8, 10),
+		r_hour = rec.substring(11, 13),
+		r_min = rec.substring(14, 16),
+		r_sec = rec.substring(17, 19),
+		rectime = new Date(r_year, r_month - 1, r_day, r_hour, r_min, r_sec),
+		now = new Date();
 	if (rectime > now) return "future";
 	else return "past";
 };
-get = (async () => {
+const get = (async () => {
 	data = (await chrome.storage.local.get("key")).key;
 	userdata = (await chrome.storage.local.get("userdata")).userdata;
 	data = data.filter(d => comparetime(d.limit) != "past");
 	userdata = userdata.filter(d => comparetime(d.limit) != "past");
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata: userdata });
+	reflesh = (await chrome.storage.local.get("option")).option.reflesh;
 	info.innerText = `登録ワード数: ${data.length}
 		登録ユーザー数: ${userdata.length}`;
 })();
@@ -129,31 +131,12 @@ btn1.onclick = async () => {
 			return;
 		}
 		if (userdata.some(d => d.name == val) && userdata.some(d => d.sta == select.value)) {
-			info.innerHTML = `@${val}（${select.value}）は登録済みです`;
+			info.innerHTML = `@${val}（${selectval(select.value)}）は登録済みです`;
 			return;
 		}
 
 		res = `発射完了<br>ユーザー： @${val}<br>`;
-		switch (select.value) {
-			case "rponly":
-				res += `リポストのみ表示<br>`;
-				break;
-			case "rpexcept":
-				res += `リポスト以外表示<br>`;
-				break;
-			case "mediaonly":
-				res += `メディアポストのみ表示<br>`;
-				break;
-			case "mediaexcept":
-				res += `メディアポスト以外表示<br>`;
-				break;
-			case "worddelete":
-				res += `文章削除＆メディアのみ表示<br>`;
-				break;
-			case "mediadelete":
-				res += `メディア削除＆文章のみ表示<br>`;
-				break;
-		}
+		res += `${selectval(select.value)}<br>`;
 		if (checklim.checked) {
 			res += `期限： ${gettime(lim.value)}まで`;
 			limi = gettime(lim.value);
@@ -172,7 +155,7 @@ btn2.onclick = () => chrome.runtime.openOptionsPage();
 document.onvisibilitychange = () => {
 	chrome.tabs.query({}, tabs => {
 		for (t of tabs) {
-			if (t.url && change) {
+			if (t.url && change && reflesh) {
 				if (t.url.includes("https://x.com")) {
 					chrome.tabs.reload(t.id);
 				}
@@ -180,3 +163,20 @@ document.onvisibilitychange = () => {
 		}
 	});
 };
+
+const selectval = v => {
+	switch (v) {
+		case "rponly":
+			return "リポストのみ表示";
+		case "rpexcept":
+			return "リポスト以外表示";
+		case "mediaonly":
+			return "メディアポストのみ表示";
+		case "mediaexcept":
+			return "メディアポスト以外表示";
+		case "worddelete":
+			return "文章削除＆メディアのみ表示";
+		case "mediadelete":
+			return "メディア削除＆文章のみ表示";
+	}
+}

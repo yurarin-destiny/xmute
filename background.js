@@ -1,19 +1,18 @@
-initialize = async () => {
+const initialize = async () => {
 	await chrome.contextMenus.removeAll();
-	
+
 	chrome.contextMenus.create({
 		id: "pop",
 		title: "「%s」を非表示発射のド迫力",
 		contexts: ["selection"],
 	});
-}
+};
 
 chrome.runtime.onInstalled.addListener(async () => {
 	const data = (await chrome.storage.local.get("key")).key || [],
 		userdata = (await chrome.storage.local.get("userdata")).userdata || [],
 		optiondata = (await chrome.storage.local.get("option")).option || {
-			interval: 500,
-			searchnameng: true,
+			interval: 500, searchnameng: true, reflesh: true
 		};
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata: userdata });

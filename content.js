@@ -1,10 +1,12 @@
 const tweets = document.getElementsByClassName("r-qklmqi"),
+	replyedtweets = document.getElementsByClassName("css-175oi2r r-1adg3ll r-1ny4l3l"),
 	names = document.getElementsByClassName("css-175oi2r r-zl2h9q"),
 	retweets = document.getElementsByClassName("css-1jxf684 r-8akbws r-1cwl3u0"),
 	medias = document.getElementsByClassName("r-1867qdf r-1udh08x r-o7ynqc"),
 	words = document.getElementsByClassName("r-16dba41 r-bnwqim");
 let url = new URL(location.href),
-	query = new URLSearchParams(location.search).get("q");
+	query = new URLSearchParams(location.search).get("q"),
+	querys;
 
 const comparetime = rec => {
 	if (!rec) return "none";
@@ -20,7 +22,7 @@ const comparetime = rec => {
 	else return "past";
 };
 
-const onload = async () => {
+onload = async () => {
 	let data = (await chrome.storage.local.get("key")).key,
 		userdata = (await chrome.storage.local.get("userdata")).userdata;
 	const optiondata = (await chrome.storage.local.get("option")).option;
@@ -31,23 +33,10 @@ const onload = async () => {
 
 	setInterval(() => {
 		for (let t of tweets) {
-			for (let d of data) {
-				if (t.textContent.includes(d.word)) {
-					t.remove();
-					console.log("ワード削除: " + d.word);
-				}
-			}
-			// メディアポストのみ表示
-			for (let d of userdata) {
-				if (
-					t.textContent.includes(d.name) &&
-					d.sta == "mediaonly" &&
-					t.getElementsByClassName("r-1867qdf r-1udh08x r-o7ynqc").length == 0
-				) {
-					t.closest(".r-qklmqi").remove();
-					console.log("メディアポスト以外削除: " + d.name);
-				}
-			}
+			func1(t, data, userdata);
+		}
+		for (let t of replyedtweets) {
+			func1(t, data, userdata);
 		}
 		// リポストのみ表示
 		for (let n of names) {
@@ -58,9 +47,10 @@ const onload = async () => {
 				}
 			}
 		}
-		if (url.pathname == "/search" && optiondata.searchnameng) {
+		if (url.pathname == "/search" && optiondata.searchnameng && query) {
+			querys = query.split(/\s/);
 			for (let n of names) {
-				if (n.textContent.replace(/[\s・]/, "").includes(query)) {
+				if (querys.some(q => n.textContent.includes(q))) {
 					n.closest(".r-qklmqi").remove();
 					console.log("名前削除: " + query);
 				}
@@ -140,3 +130,27 @@ const onload = async () => {
 
 	console.log(`更新間隔： ${optiondata.interval}ミリ秒`);
 };
+
+chrome.runtime.onMessage.addListener(() => {
+	location.reload();
+});
+
+const func1 = (t,data,userdata) => {
+	for (let d of data) {
+		if (new RegExp(d.word).test(t.textContent)) {
+			t.remove();
+			console.log("ワード削除: " + d.word);
+		}
+	}
+	// メディアポストのみ表示
+	for (let d of userdata) {
+		if (
+			t.textContent.includes(d.name) &&
+			d.sta == "mediaonly" &&
+			t.getElementsByClassName("r-1867qdf r-1udh08x r-o7ynqc").length == 0
+		) {
+			t.closest(".r-qklmqi").remove();
+			console.log("メディアポスト以外削除: " + d.name);
+		}
+	}
+}

@@ -157,7 +157,7 @@ document.onvisibilitychange = () => {
 		for (t of tabs) {
 			if (t.url && change && reflesh) {
 				if (t.url.includes("https://x.com")) {
-					chrome.tabs.reload(t.id);
+					chrome.tabs.sendMessage(t.id, {});
 				}
 			}
 		}
@@ -179,4 +179,4 @@ const selectval = v => {
 		case "mediadelete":
 			return "メディア削除＆文章のみ表示";
 	}
-}
+};

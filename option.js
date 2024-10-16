@@ -153,7 +153,7 @@ save.onclick = async () => {
 	await chrome.storage.local.set({ option: optiondata });
 	write();
 	changefun();
-	alert("保存しました")
+	alert("保存しました");
 }
 
 savetx.onclick = () => {
@@ -207,7 +207,7 @@ const changefun = () => {
 };
 document.onvisibilitychange = () => {
 	if (change && optiondata.reflesh) {
-		chrome.tabs.reload(tid);
+		chrome.tabs.sendMessage(tid, {});
 	}
 };
 write();

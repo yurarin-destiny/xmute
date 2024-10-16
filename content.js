@@ -137,9 +137,16 @@ chrome.runtime.onMessage.addListener(() => {
 
 const func1 = (t,data,userdata) => {
 	for (let d of data) {
-		if (new RegExp(d.word).test(t.textContent)) {
-			t.remove();
-			console.log("ワード削除: " + d.word);
+		if (!d.regex) {
+			if (t.textContent.includes(d.word)) {
+				t.remove();
+				console.log("ワード削除: " + d.word);
+			}
+		} else {
+			if (new RegExp(d.word).test(t.textContent)) {
+				t.remove();
+				console.log("ワード削除: " + d.word);
+			}
 		}
 	}
 	// メディアポストのみ表示

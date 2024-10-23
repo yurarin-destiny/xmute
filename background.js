@@ -2,10 +2,20 @@ chrome.runtime.onInstalled.addListener(async () => {
 	const data = (await chrome.storage.local.get("key")).key || [],
 		userdata = (await chrome.storage.local.get("userdata")).userdata || [],
 		optiondata = (await chrome.storage.local.get("option")).option || {
-			interval: 500, searchnameng: true, reflesh: true
+			interval: 300,
+			searchnameng: true,
+			reflesh: false,
+			reply: false,
+			repost: false,
+			like: false,
+			impre: false,
+			book: false,
+			follow: false,
+			follower: false,
+			remmode: "standard",
 		};
 	await chrome.storage.local.set({ key: data });
-	await chrome.storage.local.set({ userdata: userdata });
+	await chrome.storage.local.set({ userdata });
 	await chrome.storage.local.set({ option: optiondata });
 	chrome.storage.local.remove("select");
 	await chrome.contextMenus.removeAll();

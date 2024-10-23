@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        const neko = async () => {
+            const json = await (await fetch("https://cataas.com/cat?json=true")).json();
+            const c = json.createdAt;
+            const res = await (await fetch(`https://cataas.com/cat/${json._id}?width=520&height=440`)).blob();
+            const a = document.createElement("a");
+            a.href = "https://cataas.com/cat/"+json._id;
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(res);
+            document.write("neko @cataas　　　　　　"+ `${c.slice(0, 4)}年${c.slice(5, 7)}月${c.slice(8, 10)}日`)
+            document.body.appendChild(a);
+            a.appendChild(img);
+            document.write("<br>")
+            return ["https://cataas.com/cat/" + json._id,
+                URL.createObjectURL(res),
+                `${c.slice(0, 4)}年${c.slice(5, 7)}月${c.slice(8, 10)}日`
+            ];
+        }
+        const getneko = async () => {
+            const json = await (await fetch("https://cataas.com/cat?json=true")).json();
+            const res = await (await fetch(`https://cataas.com/cat/${json._id}?width=520&height=440`)).blob();
+            const c = json.createdAt;
+            return ["https://cataas.com/cat/" + json._id,
+                URL.createObjectURL(res),
+                `${c.slice(0, 4)}年${c.slice(5, 7)}月${c.slice(8, 10)}日`
+            ];
+        }
+        //neko().then(r => console.log(r));
+        /*
+        0: "https://cataas.com/cat/d7UnPMzdhUs7lUQC"
+        1: "blob:http://127.0.0.1:5500/54e08388-a477-47d7-b12f-5e8f937a7858"
+        2: "2024年06月03日"
+        */
+        
+        const simple = async () => {
+            const res = await fetch("https://cataas.com/cat?width=520&height=440");
+            const blob = await res.blob();
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            const img = document.createElement("img");
+            img.src = URL.createObjectURL(blob);
+            document.body.appendChild(a);
+            a.appendChild(img);
+            console.log(res);
+            console.log(blob);
+            
+        };
+        
+        
+    </script>
+</body>
+
+</html>

@@ -3,10 +3,18 @@ const tweets = document.getElementsByClassName("r-qklmqi"),
 	names = document.getElementsByClassName("css-175oi2r r-zl2h9q"),
 	retweets = document.getElementsByClassName("css-1jxf684 r-8akbws r-1cwl3u0"),
 	medias = document.getElementsByClassName("r-1867qdf r-1udh08x r-o7ynqc"),
-	words = document.getElementsByClassName("r-16dba41 r-bnwqim");
+	words = document.getElementsByClassName("r-16dba41 r-bnwqim"),
+	rrlis = document.getElementsByClassName("css-175oi2r r-xoduu5 r-1udh08x"),
+	impre = document.getElementsByClassName("r-18u37iz r-1wbh5a2 r-1471scf"),
+	follows = document.getElementsByClassName("r-1b43r93 r-1cwl3u0 r-b88u0q");
 let url = new URL(location.href),
 	query = new URLSearchParams(location.search).get("q"),
-	querys;
+	querys,
+	data,
+	userdata,
+	opdata,
+	fetchdata = [],
+	fetchcount = 0;
 
 const comparetime = rec => {
 	if (!rec) return "none";
@@ -23,35 +31,36 @@ const comparetime = rec => {
 };
 
 onload = async () => {
-	let data = (await chrome.storage.local.get("key")).key,
-		userdata = (await chrome.storage.local.get("userdata")).userdata;
-	const optiondata = (await chrome.storage.local.get("option")).option;
+	data = (await chrome.storage.local.get("key")).key;
+	userdata = (await chrome.storage.local.get("userdata")).userdata;
+	opdata = (await chrome.storage.local.get("option")).option;
 	data = data.filter(d => comparetime(d.limit) != "past");
 	userdata = userdata.filter(d => comparetime(d.limit) != "past");
 	await chrome.storage.local.set({ key: data });
-	await chrome.storage.local.set({ userdata: userdata });
+	await chrome.storage.local.set({ userdata });
 
 	setInterval(() => {
 		for (let t of tweets) {
-			func1(t, data, userdata);
+			func1(t);
 		}
 		for (let t of replyedtweets) {
-			func1(t, data, userdata);
+			func1(t);
 		}
 		// リポストのみ表示
 		for (let n of names) {
 			for (let d of userdata) {
 				if (n.textContent.includes(d.name) && d.sta == "rponly") {
-					n.closest(".r-qklmqi").remove();
+					rem(n.closest(".r-qklmqi"));
 					console.log("リポスト以外削除: " + d.name);
 				}
 			}
 		}
-		if (url.pathname == "/search" && optiondata.searchnameng && query) {
+		// 名前削除
+		if (url.pathname == "/search" && opdata.searchnameng && query) {
 			querys = query.split(/\s/);
 			for (let n of names) {
-				if (querys.some(q => n.textContent.includes(q))) {
-					n.closest(".r-qklmqi").remove();
+				if (querys.some(q => n.textContent.replace(/\s/, "").includes(q))) {
+					rem(n.closest(".r-qklmqi"));
 					console.log("名前削除: " + query);
 				}
 			}
@@ -60,7 +69,7 @@ onload = async () => {
 		for (let r of retweets) {
 			for (let d of userdata) {
 				if (r.parentNode.href.includes(d.name) && d.sta == "rpexcept") {
-					r.closest(".r-qklmqi").remove();
+					rem(r.closest(".r-qklmqi"));
 					console.log("リポスト削除: " + d.name);
 				}
 			}
@@ -74,7 +83,7 @@ onload = async () => {
 					closest = ".r-qklmqi";
 				}
 				if (m.closest(closest).textContent.includes(d.name) && d.sta == "mediaexcept") {
-					m.closest(closest).remove();
+					rem(m.closest(closest));
 					console.log("メディアポスト削除: " + d.name);
 				}
 			}
@@ -90,9 +99,9 @@ onload = async () => {
 				}
 				if (m.closest(closest).textContent.includes(d.name) && d.sta == "mediadelete") {
 					if (m.closest(".r-kzbkwu").childNodes[1].textContent == "") {
-						m.closest(closest).remove();
+						rem(m.closest(closest));
 					} else {
-						m.remove();
+						rem(m);
 					}
 					console.log("メディア削除: " + d.name);
 				}
@@ -111,9 +120,9 @@ onload = async () => {
 						w.closest(closest).getElementsByClassName("r-1867qdf r-1udh08x r-o7ynqc")
 							.length == 0
 					) {
-						w.closest(closest).remove();
+						rem(w.closest(closest));
 					} else {
-						w.remove();
+						rem(w);
 					}
 					console.log("ワード削除: " + d.name);
 				}
@@ -125,26 +134,72 @@ onload = async () => {
 				console.log("検索単語変更 名前NG: " + query);
 			}
 		}
+		for (let r of rrlis) {
+			if (!r.closest("[aria-label]")) {
+				continue;
+			}
+			if (r.closest("[aria-label]").ariaLabel.includes("返信") && opdata.reply) {
+				r.firstChild.textContent = "";
+			}
+			if (r.closest("[aria-label]").ariaLabel.includes("リポスト") && opdata.repost) {
+				r.firstChild.textContent = "";
+			}
+			if (r.closest("[aria-label]").ariaLabel.includes("いいね") && opdata.like) {
+				r.firstChild.textContent = "";
+			}
+			if (r.closest("[aria-label]").ariaLabel.includes("表示") && opdata.impre) {
+				r.firstChild.textContent = "";
+			}
+			if (r.closest("[aria-label]").ariaLabel.includes("ブックマーク") && opdata.book) {
+				r.firstChild.textContent = "";
+			}
+		}
+		for (let f of follows) {
+			if (f.parentNode.tagName != "A") {
+				continue;
+			}
+			if (f.parentNode.href.includes("following") && opdata.follow) {
+				f.textContent = "";
+			}
+			if (f.parentNode.href.includes("follower") && opdata.follower) {
+				f.textContent = "";
+			}
+		}
+		for (let i of impre) {
+			if (opdata.impre) {
+				i.childNodes[1].textContent = "";
+				i.childNodes[2].textContent = "";
+			}
+		}
 		url = new URL(location.href);
-	}, optiondata.interval);
+	}, opdata.interval);
 
-	console.log(`更新間隔： ${optiondata.interval}ミリ秒`);
+	console.log(`更新間隔： ${opdata.interval}ミリ秒`);
 };
 
-chrome.runtime.onMessage.addListener(() => {
-	location.reload();
+chrome.runtime.onMessage.addListener(async () => {
+	if (opdata.reflesh) {
+		location.reload();
+	} else {
+		data = (await chrome.storage.local.get("key")).key;
+		userdata = (await chrome.storage.local.get("userdata")).userdata;
+		opdata = (await chrome.storage.local.get("option")).option;
+		fetchdata = [];
+		fetchcount = 0;
+	}
+	
 });
 
-const func1 = (t,data,userdata) => {
+const func1 = t => {
 	for (let d of data) {
 		if (!d.regex) {
 			if (t.textContent.includes(d.word)) {
-				t.remove();
+				rem(t);
 				console.log("ワード削除: " + d.word);
 			}
 		} else {
 			if (new RegExp(d.word).test(t.textContent)) {
-				t.remove();
+				rem(t);
 				console.log("ワード削除: " + d.word);
 			}
 		}
@@ -160,4 +215,195 @@ const func1 = (t,data,userdata) => {
 			console.log("メディアポスト以外削除: " + d.name);
 		}
 	}
+};
+const getneko = async () => {
+	if (fetchdata.length <= 50) {
+		const fet = await fetch("https://cataas.com/cat");
+		if (!fet.ok) {
+			return chrome.runtime.getURL("image/error.jpg");
+		}
+		const res = await fet.blob();
+		const url = URL.createObjectURL(res);
+		fetchdata.push(url);
+		return url;
+	} else {
+		if (fetchcount > 50) {
+			fetchcount = 0;
+		}
+		fetchcount++;
+		return fetchdata[fetchcount-1];
+	}
+};
+const getinu = async () => {
+	if (fetchdata.length <= 50) {
+		const fet = await (await fetch("https://dog.ceo/api/breeds/image/random")).json();
+		if (!fet.ok) {
+			return chrome.runtime.getURL("image/error.jpg");
+		}
+		const blob = await (await fetch(fet.message)).blob();
+		const url = URL.createObjectURL(blob);
+		fetchdata.push(url);
+		return url;
+	} else {
+		if (fetchcount > 50) {
+			fetchcount = 0;
+		}
+		fetchcount++;
+		return fetchdata[fetchcount - 1];
+	}
+};
+const getkitune = async () => {
+	if (fetchdata.length <= 50) {
+		const fet = await (await fetch("https://randomfox.ca/floof")).json();
+		if (!fet.ok) {
+			return chrome.runtime.getURL("image/error.jpg");
+		}
+		const blob = await (await fetch(fet.image)).blob();
+		const url = URL.createObjectURL(blob);
+		fetchdata.push(url);
+		return url;
+	} else {
+		if (fetchcount > 50) {
+			fetchcount = 0;
+		}
+		fetchcount++;
+		return fetchdata[fetchcount - 1];
+	}
+};
+const befinsert = (e,icon,name,id,date) => {
+	e.getElementsByClassName("r-16y2uox r-1wbh5a2 r-1ny4l3l")[0].innerHTML = `
+		<div class="css-175oi2r">
+			<div class="css-175oi2r r-18u37iz">
+				<div class="css-175oi2r r-1iusvr4 r-16y2uox r-ttdzmv"></div>
+			</div>
+		</div>
+<div class="css-175oi2r r-18u37iz">
+    <div class="css-175oi2r r-18kxxzh r-1wron08 r-onrtq4 r-1awozwy">
+        <div class="css-175oi2r">
+            <div class="css-175oi2r r-18kxxzh r-1wbh5a2 r-13qz1uu">
+                <div class="css-175oi2r r-1wbh5a2 r-dnmrzs">
+                    <div class="css-175oi2r r-bztko3 r-1adg3ll" style="width: 40px; height: 40px;">
+                        <div class="r-1adg3ll r-13qz1uu" style="padding-bottom: 100%;"></div>
+                        <div class="r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-ipm5af r-13qz1uu">
+                            <div class="css-175oi2r r-1adg3ll r-1pi2tsx r-13qz1uu r-45ll9u r-u8s1d r-1v2oles r-176fswd r-bztko3">
+                                <div class="r-1adg3ll r-13qz1uu" style="padding-bottom: 100%;"></div>
+                                <div class="r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-ipm5af r-13qz1uu">
+                                    <div class="css-175oi2r r-sdzlij r-1udh08x r-5f1w11 r-u8s1d r-8jfcpp" style="width: calc(100% + 4px); height: calc(100% + 4px);">
+                                        <div class="css-175oi2r r-sdzlij r-1udh08x r-633pao r-45ll9u r-u8s1d r-1v2oles r-176fswd" style="width: calc(100% - 4px); height: calc(100% - 4px);">
+                                            <div class="css-175oi2r r-1pi2tsx r-13qz1uu"></div>
+                                        </div>
+                                        <div class="css-175oi2r r-sdzlij r-1udh08x r-633pao r-45ll9u r-u8s1d r-1v2oles r-176fswd" style="width: calc(100% - 4px); height: calc(100% - 4px);">
+                                            <div class="css-175oi2r r-1pi2tsx r-13qz1uu r-14lw9ot"></div>
+                                        </div>
+                                        <div class="css-175oi2r r-sdzlij r-1udh08x r-633pao r-45ll9u r-u8s1d r-1v2oles r-176fswd" style="background-color: rgb(255, 255, 255); width: calc(100% - 4px); height: calc(100% - 4px);">
+                                            <div class="css-175oi2r r-1adg3ll r-1udh08x">
+                                                <div class="r-1adg3ll r-13qz1uu" style="padding-bottom: 100%;"></div>
+                                                <div class="r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-ipm5af r-13qz1uu">
+                                                    <div class="css-175oi2r r-1mlwlqe r-1udh08x r-417010 r-1p0dtai r-1d2f490 r-u8s1d r-zchlnj r-ipm5af">
+                                                        <div class="css-175oi2r r-1niwhzg r-vvn4in r-u6sd8q r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-zchlnj r-ipm5af r-13qz1uu r-1wyyakw r-4gszlv" style="background-image: url(&quot;${icon}&quot;);"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="css-175oi2r r-sdzlij r-1udh08x r-45ll9u r-u8s1d r-1v2oles r-176fswd" style="width: calc(100% - 4px); height: calc(100% - 4px);">
+                                            <div class="css-175oi2r r-12181gd r-1pi2tsx r-13qz1uu r-o7ynqc r-6416eg r-1ny4l3l"></div>
+                                        </div>
+									</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="css-175oi2r r-1iusvr4 r-16y2uox r-1777fci r-kzbkwu">
+        <div class="css-175oi2r r-zl2h9q">
+            <div class="css-175oi2r r-k4xj1c r-18u37iz r-1wtj0ep">
+                <div class="css-175oi2r r-1d09ksm r-18u37iz r-1wbh5a2">
+                    <div class="css-175oi2r r-1wbh5a2 r-dnmrzs r-1ny4l3l">
+                        <div class="css-175oi2r r-1wbh5a2 r-dnmrzs r-1ny4l3l r-1awozwy r-18u37iz" id="id__w9iu5ley2pc">
+                            <div class="css-175oi2r r-1awozwy r-18u37iz r-1wbh5a2 r-dnmrzs">
+                                <div class="css-175oi2r r-1wbh5a2 r-dnmrzs">
+                                    <div class="css-175oi2r r-1awozwy r-18u37iz r-1wbh5a2 r-dnmrzs">
+                                        <div dir="ltr" class="css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-b88u0q r-1awozwy r-6koalj r-1udh08x r-3s2u2q" style="text-overflow: unset; color: rgb(15, 20, 25);">
+											<span class="css-1jxf684 r-dnmrzs r-1udh08x r-3s2u2q r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc" style="text-overflow: unset;">
+												<span class="css-1jxf684 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc" style="text-overflow: unset;">${name}</span>
+											</span>
+										</div>
+                                        <div dir="ltr" class="css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-18u37iz r-1q142lx" style="text-overflow: unset; color: rgb(15, 20, 25);">
+											<span class="css-1jxf684 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-1awozwy r-xoduu5" style="text-overflow: unset;"></span>
+										</div>
+                                    </div>
+								</div>
+                            </div>
+                            <div class="css-175oi2r r-18u37iz r-1wbh5a2 r-1ez5h0i">
+                                <div class="css-175oi2r r-1d09ksm r-18u37iz r-1wbh5a2">
+                                    <div class="css-175oi2r r-1wbh5a2 r-dnmrzs">
+                                        <div dir="ltr" class="css-146c3p1 r-dnmrzs r-1udh08x r-3s2u2q r-bcqeeo r-1ttztb7 r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-18u37iz r-1wvb978" style="text-overflow: unset; color: rgb(83, 100, 113);">
+											<span class="css-1jxf684 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc" style="text-overflow: unset;">@${id}</span>
+										</div>
+									</div>
+                                    <div dir="ltr" aria-hidden="true" class="css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-16dba41 r-1q142lx r-n7gxbd" style="text-overflow: unset; color: rgb(83, 100, 113);"><span class="css-1jxf684 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc" style="text-overflow: unset;">·</span></div>
+                                    <div class="css-175oi2r r-18u37iz r-1q142lx css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-1q142lx r-1w6e6rj r-9aw3ui r-3s2u2q r-1loqt21" style="text-overflow: unset; color: rgb(83, 100, 113);">${date}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		<div aria-labelledby="id__nlz7oa8tycj id__ty3esfoezo" class="css-175oi2r r-9aw3ui r-1s2bzr4" id="id__x1dulrnw08a">
+			<img style="margin: auto; padding-top: 120px; padding-bottom: 120px;" src="${chrome.runtime.getURL("image/loading.gif")}">
+		</div>
+	</div>
+</div>`;
 }
+const insert = async (e,url) => {
+	e.getElementsByClassName("css-175oi2r r-9aw3ui r-1s2bzr4")[0].innerHTML = `
+        <div class="css-175oi2r r-9aw3ui">
+            <div class="css-175oi2r">
+                <div class="css-175oi2r r-k200y" style="width: 98%;">
+                    <div class="css-175oi2r r-1ets6dv r-1phboty r-rs99b7 r-1867qdf r-1udh08x r-o7ynqc r-6416eg r-1ny4l3l" style="height: 320px; ">
+                        <div class="css-175oi2r">
+                            <div class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu">
+								<a href="${url}" target="_blank" role="link" class="css-175oi2r r-1pi2tsx r-1ny4l3l r-1loqt21">
+                                    <div class="css-175oi2r r-1adg3ll r-1udh08x">
+                                        <div class="r-1adg3ll r-13qz1uu" style="padding-bottom: 111.121%;"></div>
+                                        <div class="r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-ipm5af r-13qz1uu">
+                                            <div class="css-175oi2r r-1mlwlqe r-1udh08x r-417010 r-1p0dtai r-1d2f490 r-u8s1d r-zchlnj r-ipm5af" style="margin: 0px;">
+                                                <div class="css-175oi2r r-1niwhzg r-vvn4in r-u6sd8q r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-zchlnj r-ipm5af r-13qz1uu r-1wyyakw r-4gszlv" style=" background-image: url(&quot;${url}&quot;);"></div>
+											</div>
+										</div>
+									</div>
+                                </a>
+							</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+}
+const rem = async e => {
+	if (opdata.remmode == "standard") {
+		e.remove();
+		return;
+	}
+	switch (opdata.remmode) {
+		case "neko":
+			befinsert(e, chrome.runtime.getURL("image/neko.jpg"),
+				"neko", "cataas", "2月22日");
+			insert(e, await getneko());
+			break;
+		case "inu":
+			befinsert(e, chrome.runtime.getURL("image/neko.jpg"),
+				"inu", "dog_api", "11月1日");
+			insert(e, await getinu());
+			break;
+		case "kitune":
+			befinsert(e, chrome.runtime.getURL("image/kitune.jpg"),
+				"kitune","randomfox","4月10日");
+			insert(e, await getkitune());
+			break;
+	}
+};

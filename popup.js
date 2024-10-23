@@ -12,8 +12,7 @@ let limi = "",
 	res = "",
 	data,
 	userdata,
-	change = false,
-	reflesh = true;
+	change = false;
 
 chrome.storage.local.get("select", d => (newword.value = d.select || ""));
 
@@ -54,8 +53,7 @@ const get = (async () => {
 	data = data.filter(d => comparetime(d.limit) != "past");
 	userdata = userdata.filter(d => comparetime(d.limit) != "past");
 	await chrome.storage.local.set({ key: data });
-	await chrome.storage.local.set({ userdata: userdata });
-	reflesh = (await chrome.storage.local.get("option")).option.reflesh;
+	await chrome.storage.local.set({ userdata });
 	info.innerText = `登録ワード数: ${data.length}
 		登録ユーザー数: ${userdata.length}`;
 })();
@@ -155,7 +153,7 @@ btn2.onclick = () => chrome.runtime.openOptionsPage();
 document.onvisibilitychange = () => {
 	chrome.tabs.query({}, tabs => {
 		for (t of tabs) {
-			if (t.url && change && reflesh) {
+			if (t.url && change) {
 				if (t.url.includes("https://x.com")) {
 					chrome.tabs.sendMessage(t.id, {});
 				}

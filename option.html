@@ -11,18 +11,28 @@
             line-height: 30px;
             font-size: 16px;
         }
-        #flexbox {
+        .conte {
             display: flex;
             flex-direction: column;
+            width: fit-content;
         }
         .flex-item {
             background: rgb(255, 255, 255);
-            border: 1px dashed #000;
-            width: 500px;
+            border: 1px dashed #666;
             padding: 20px;
             padding-top: 15px;
             padding-bottom: 15px;
             margin-bottom: 20px;
+        }
+        
+        .flex-item:first-of-type {
+            width: fit-content;
+        }
+        .flex-item:not(:first-of-type) {
+            width: 100%-20px;
+        }
+        .option {
+            margin: 10px;
         }
         .del, .del2 {
             margin-left: 10px;
@@ -34,21 +44,66 @@
         .right { text-align: right; }
         #loadtx { display: none;}
         .loadtx { text-decoration: underline; color: #0000FF;}
+        table { 
+            border: 0px;
+            border-collapse: collapse;
+            white-space: nowrap;
+            margin: 10px;
+        }
+        tr, td {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+        td:nth-child(1) {
+            width: 180px;
+        }
+        td:nth-child(2) {
+            width: 140px;
+        }
+        thead {
+            font-size: 14px;
+        }
+        tbody tr:nth-child(odd) {
+            background-color: #eee;
+        }
     </style>
 </head>
 <body>
     <h2>非表示一覧のド迫力X</h2>
     <p id="info"></p>
-    <div id="flexbox"></div>
+    <div class="conte">
+    <div id="flexbox" class="flex-item"></div>
     <div id="user" class="flex-item"></div>
     <div class="flex-item">
-        3: オプション<br><br>
-        更新間隔<input type="number" id="interval" min="100">ミリ秒<br>
+        3: オプション<br>
+        <div class="option">
+        更新間隔<input type="number" id="interval" min="50">ミリ秒<br>
         <label><input type="checkbox" id="checknameng">
-        検索単語が名前に含まれるツイートを非表示</label><br>
+            検索単語が名前に含まれるツイートを非表示</label><br>
         <label><input type="checkbox" id="checkreflesh">
-        設定変更後にXのタブを更新する</label><br>
+            設定変更後にXのタブを更新する</label><br>
+        <label><input type="checkbox" id="checkreply">
+            リプライ数を非表示にする</label><br>
+        <label><input type="checkbox" id="checkrepost">
+            リポスト数を非表示にする</label><br>
+        <label><input type="checkbox" id="checklike">
+            いいね数を非表示にする</label><br>
+        <label><input type="checkbox" id="checkimpre">
+            インプレッション数を非表示にする</label><br>
+        <label><input type="checkbox" id="checkbook">
+            ブックマーク数を非表示にする</label><br>
+        <label><input type="checkbox" id="checkfollow">
+            フォロー数を非表示にする</label><br>
+        <label><input type="checkbox" id="checkfollower">
+            フォロワー数を非表示にする</label><br>
+        削除したポストの置き換え
+        <label><input type="radio" name="radpost" value="standard" checked>なし</label>
+        <label><input type="radio" name="radpost" value="neko">ねこ</label>
+        <label><input type="radio" name="radpost" value="inu">いぬ</label>
+        <label><input type="radio" name="radpost" value="kitune">きつね</label>
+        </div>
         <button id="save">保存</button>
+    </div>
     </div>
     <a id="savetx" href="#">設定をテキストファイルで保存</a>　
     <span class="loadtx"><label>

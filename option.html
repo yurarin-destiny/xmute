@@ -31,9 +31,7 @@
         .flex-item:not(:first-of-type) {
             width: 100%-20px;
         }
-        .option {
-            margin: 10px;
-        }
+        .option { margin: 10px; }
         .del, .del2 {
             margin-left: 10px;
             padding-left: 10px;
@@ -54,17 +52,24 @@
             padding-left: 20px;
             padding-right: 20px;
         }
-        td:nth-child(1) {
-            width: 180px;
-        }
-        td:nth-child(2) {
-            width: 140px;
-        }
-        thead {
-            font-size: 14px;
-        }
+        td:nth-child(1) { width: 180px; }
+        td:nth-child(2) { width: 140px; }
+        thead { font-size: 14px; }
         tbody tr:nth-child(odd) {
             background-color: #eee;
+        }
+        fieldset {
+            width: fit-content;
+            border: 1px dashed #666;
+            margin-bottom: 10px;
+        }
+        fieldset div {
+            margin-left: 10px;
+            margin-right: 20px;
+        }
+        fieldset div label {
+            margin-left: 5px;
+            margin-right: 5px;
         }
     </style>
 </head>
@@ -82,25 +87,36 @@
             検索単語が名前に含まれるツイートを非表示</label><br>
         <label><input type="checkbox" id="checkreflesh">
             設定変更後にXのタブを更新する</label><br>
-        <label><input type="checkbox" id="checkreply">
-            リプライ数を非表示にする</label><br>
-        <label><input type="checkbox" id="checkrepost">
-            リポスト数を非表示にする</label><br>
-        <label><input type="checkbox" id="checklike">
-            いいね数を非表示にする</label><br>
-        <label><input type="checkbox" id="checkimpre">
-            インプレッション数を非表示にする</label><br>
-        <label><input type="checkbox" id="checkbook">
-            ブックマーク数を非表示にする</label><br>
-        <label><input type="checkbox" id="checkfollow">
-            フォロー数を非表示にする</label><br>
-        <label><input type="checkbox" id="checkfollower">
-            フォロワー数を非表示にする</label><br>
-        削除したポストの置き換え
-        <label><input type="radio" name="radpost" value="standard" checked>なし</label>
-        <label><input type="radio" name="radpost" value="neko">ねこ</label>
-        <label><input type="radio" name="radpost" value="inu">いぬ</label>
-        <label><input type="radio" name="radpost" value="kitune">きつね</label>
+        <fieldset>
+            <legend>数字を非表示にする</legend>
+            <div>
+                <label><input type="checkbox" id="checkreply">
+                    リプライ</label>
+                <label><input type="checkbox" id="checkrepost">
+                    リポスト</label>
+                <label><input type="checkbox" id="checklike">
+                    いいね</label><br>
+                <label><input type="checkbox" id="checkimpre">
+                    インプレッション</label>
+                <label><input type="checkbox" id="checkbook">
+                    ブックマーク</label><br>
+                <label><input type="checkbox" id="checkfollow">
+                    フォロー</label>
+                <label><input type="checkbox" id="checkfollower">
+                    フォロワー</label>
+            </div>
+        </fieldset>
+        <fieldset id="fieldreplace">
+            <legend>削除したポストを置き換える</legend>
+            <div>
+                <label><input type="checkbox" id="checkneko">
+                    ねこ</label>
+                <label><input type="checkbox" id="checkinu">
+                    いぬ</label>
+                <label><input type="checkbox" id="checkkitune">
+                    きつね</label>
+            </div>
+        </fieldset>
         </div>
         <button id="save">保存</button>
     </div>

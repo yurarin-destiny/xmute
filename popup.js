@@ -69,22 +69,12 @@ radio[1].onchange = () => {
 	newuser.disabled = false;
 	newword.disabled = true;
 };
-checkreg.onclick = () => {
-	if (checkreg.checked) {
-		info.innerText = "[\\u0400-\\u19FF]+$ でアラビア文字が指定できます";
-	} else {
-		info.innerText = "";
-	}
-};
 checklim.onclick = () => {
+	lim.disabled = !lim.disabled;
 	if (checklim.checked) {
-		lim.disabled = false;
 		lim.value = 1;
-		info.innerText = "";
 	} else {
-		lim.disabled = true;
 		lim.value = "";
-		info.innerText = "";
 	}
 };
 lim.onchange = () => {
@@ -96,9 +86,47 @@ btn1.onclick = async () => {
 	if (radio[0].checked) {
 		// ワードモード
 		const val = newword.value;
-		if (!val) {
-			info.innerHTML = "入力してください";
-			return;
+		switch (val) {
+			case "":
+				info.innerHTML = "入力してください";
+				return;
+			case "ド迫力":
+			case "ガンドハ":
+			case "顔ドハ":
+			case "ガシャドクリョ":
+			case "顔面発射のド迫力":
+				window.open("http://www.nicovideo.jp/watch/sm31367029", "_blank");
+				break;
+			case "サイドチェスト":
+				window.open("http://www.nicovideo.jp/watch/sm34910251", "_blank");
+				break;
+			case "向井":
+			case "チョコボール向井":
+				window.open("http://www.nicovideo.jp/watch/sm42868507", "_blank");
+				break;
+			case "ミッフィー":
+				window.open("http://www.nicovideo.jp/watch/sm41928877", "_blank");
+				break;
+			case "鈴木(淫夢)":
+			case "鈴木（淫夢）":
+				window.open("http://www.nicovideo.jp/watch/sm36602415", "_blank");
+				break;
+			case "強精コンビ":
+				window.open("http://www.nicovideo.jp/watch/sm31888403", "_blank");
+				break;
+			case "ダブルバイセップス":
+				window.open("http://www.nicovideo.jp/watch/sm35295767", "_blank");
+				break;
+			case "マルティスポーター":
+				window.open("http://www.nicovideo.jp/watch/sm35289493", "_blank");
+				break;
+			case "バックポージング":
+				window.open("http://www.nicovideo.jp/watch/sm32961207", "_blank");
+				break;
+			case "ルイ・ヴィトン":
+			case "ルイヴィトン":
+				window.open("https://jp.louisvuitton.com/", "_blank");
+				break;
 		}
 		if (data.some(d => d.word == val)) {
 			info.innerHTML = `${val}は登録済みです`;
@@ -155,7 +183,7 @@ document.onvisibilitychange = () => {
 		for (t of tabs) {
 			if (t.url && change) {
 				if (t.url.includes("https://x.com")) {
-					chrome.tabs.sendMessage(t.id, {});
+					chrome.tabs.sendMessage(t.id, "");
 				}
 			}
 		}

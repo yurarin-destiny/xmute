@@ -12,7 +12,10 @@ chrome.runtime.onInstalled.addListener(async () => {
 			book: false,
 			follow: false,
 			follower: false,
-			remmode: "standard",
+			replace: false,
+			neko: false,
+			inu: false,
+			kitune: false,
 		};
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata });
@@ -27,8 +30,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 });
 
 chrome.contextMenus.onClicked.addListener(info => {
-	const select = info.selectionText; // 選択されたテキストを取得
+	const select = info.selectionText;
 	chrome.storage.local.set({ select });
-	chrome.action.openPopup(); // ポップアップを開くためにアクションをトリガー
+	chrome.action.openPopup();
 });
-

@@ -14,7 +14,10 @@ const info = document.getElementById("info"),
 	checkbook = document.getElementById("checkbook"),
 	checkfollow = document.getElementById("checkfollow"),
 	checkfollower = document.getElementById("checkfollower"),
-	radpost = document.getElementsByName("radpost"),
+	fieldreplace = document.getElementById("fieldreplace"),
+	checkneko = document.getElementById("checkneko"),
+	checkinu = document.getElementById("checkinu"),
+	checkkitune = document.getElementById("checkkitune"),
 	save = document.getElementById("save"),
 	savetx = document.getElementById("savetx"),
 	loadtx = document.getElementById("loadtx");
@@ -161,20 +164,9 @@ const write = async () => {
 	checkbook.checked = opdata.book;
 	checkfollow.checked = opdata.follow;
 	checkfollower.checked = opdata.follower;
-	switch (opdata.remmode) {
-		case "standard":
-			radpost[0].checked = true;
-			break;
-		case "neko":
-			radpost[1].checked = true;
-			break;
-		case "inu":
-			radpost[2].checked = true;
-			break;
-		case "kitune":
-			radpost[3].checked = true;
-			break;
-	}
+	checkneko.checked = opdata.neko;
+	checkinu.checked = opdata.inu;
+	checkkitune.checked = opdata.kitune;
 };
 
 intervaltx.onchange = () => {
@@ -193,22 +185,15 @@ save.onclick = async () => {
 		book: checkbook.checked,
 		follow: checkfollow.checked,
 		follower: checkfollower.checked,
+		neko: checkneko.checked,
+		inu: checkinu.checked,
+		kitune: checkkitune.checked,
 	};
-	if (radpost[0].checked) {
-		opdata.remmode = "standard";
-	} else if (radpost[1].checked) {
-		opdata.remmode = "neko";
-	} else if (radpost[2].checked) {
-		opdata.remmode = "inu";
-	} else {
-		opdata.remmode = "kitune";
-	}
 	await chrome.storage.local.set({ option: opdata });
 	write();
 	changefun();
 	alert("保存しました");
 }
-
 savetx.onclick = () => {
 	let text = [data, userdata, opdata],
 		blob = new Blob([JSON.stringify(text)], { type: "text/plain" });
@@ -259,9 +244,18 @@ const changefun = () => {
 	});
 };
 document.onvisibilitychange = () => {
-	if (change) {
-		chrome.tabs.sendMessage(tid, {});
+	if (change && tid != undefined) {
+		console.log(tid);
+		chrome.tabs.sendMessage(tid, "");
 	}
 	change = false;
 };
 write();
+
+/*chrome.tabs.query({}, tabs => {
+	for (t of tabs) {
+		t.url = t.url ?? "";
+		console.log(t.url.includes("option.html"));
+	}
+	console.log(tabs);
+});*/

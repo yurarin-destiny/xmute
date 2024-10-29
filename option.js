@@ -2,7 +2,6 @@ const info = document.getElementById("info"),
 	flexbox = document.getElementById("flexbox"),
 	dels = document.getElementsByClassName("del"),
 	del2s = document.getElementsByClassName("del2"),
-	atags = document.getElementsByTagName("a"),
 	user = document.getElementById("user"),
 	intervaltx = document.getElementById("interval"),
 	checknameng = document.getElementById("checknameng"),
@@ -18,14 +17,15 @@ const info = document.getElementById("info"),
 	checkneko = document.getElementById("checkneko"),
 	checkinu = document.getElementById("checkinu"),
 	checkkitune = document.getElementById("checkkitune"),
+	checkahiru = document.getElementById("checkahiru"),
 	save = document.getElementById("save"),
 	savetx = document.getElementById("savetx"),
 	loadtx = document.getElementById("loadtx");
-let data,
-	userdata,
-	opdata,
+let data, userdata, opdata,
 	change = false,
-	tid;
+	tid,
+	checkhide, ngwords, ngwordsave = [],
+	checkhide2, ngids, ngidsave = [];
 
 // chrome.storage.sync 1kb 18lines, 8kb 144lines, 100kb, 1800lines
 
@@ -47,7 +47,32 @@ const set = async () => {
 	await chrome.storage.local.set({ userdata: userdata });
 	changefun();
 };
-
+const hideword = () => {
+	if (checkhide.checked) {
+		for (let w of ngwords) {
+			ngwordsave.push(w.textContent);
+			w.textContent = "****";
+		}
+	} else {
+		ngwordsave.forEach((val, i) => {
+			ngwords[i].textContent = val;
+			ngwordsave = [];
+		});
+	}
+}
+const hideid = () => {
+	if (checkhide2.checked) {
+		for (let i of ngids) {
+			ngidsave.push(i.textContent);
+			i.textContent = "@****";
+		}
+	} else {
+		ngidsave.forEach((val, i) => {
+			ngids[i].textContent = val;
+			ngidsave = [];
+		});
+	}
+};
 const write = async () => {
 	data = (await chrome.storage.local.get("key")).key;
 	userdata = (await chrome.storage.local.get("userdata")).userdata;
@@ -57,7 +82,6 @@ const write = async () => {
 	await chrome.storage.local.set({ userdata });
 
 	info.innerText = `登録ワード数: ${data.length}　登録ユーザー数: ${userdata.length}`;
-	flexbox.innerHTML = "";
 	
 	let res = '1: 非表示ワード<br>';
 	if (data.length == 0) {
@@ -65,26 +89,34 @@ const write = async () => {
 	} else {
 		res += "<table><thead><tr><td>ワード</td><td>期限</td><td></td></tr></thead><tbody>";
 		data.forEach((d, i) => {
-			if (d.regex) res += `<tr><td><b>/${d.word}/</b></td>`;
-			else res += `<tr><td>${d.word}</td>`;
+			if (d.regex) res += `<tr><td class="ngword"><b>/${d.word}/</b></td>`;
+			else res += `<tr><td class="ngword">${d.word}</td>`;
 			if (d.limit) res += `<td>${d.limit}</td>`;
 			else res += "<td>-</td>";
 			res += `<td><button class="del" value="${i}">削除</button></td>`;
 		});
 		res += "</tbody></table>";
+		res += `<label><input type="checkbox" id="checkhide"> ワードを伏せる</label>`;
 		if (data.length > 1) {
-			res +=
-				`<div class="right"><a href="#">${data.length}件すべて削除</a></div>`;
+			res += `<span class="right"><a href="#" id="alldel1">${data.length}件すべて削除</a></span>`;
 		}
-		flexbox.insertAdjacentHTML("beforeend", res);
-
-		atags[0].onclick = () => {
-			if (confirm(`NGワードをすべて削除します`)) {
-				data = [];
-				set();
-				write();
-			}
-		};
+		flexbox.innerHTML = res;
+		checkhide = document.getElementById("checkhide");
+		ngwords = flexbox.getElementsByClassName("ngword");
+		if (checkhide) {
+			checkhide.onchange = () => {
+				hideword();
+			};
+		}
+		if (document.getElementById("alldel1")) {
+			document.getElementById("alldel1").onclick = () => {
+				if (confirm(`NGワードをすべて削除します`)) {
+					data = [];
+					set();
+					write();
+				}
+			};
+		}
 	}
 	for (let i in dels) {
 		dels[i].onclick = () => {
@@ -103,7 +135,7 @@ const write = async () => {
 		res2 +=
 			"<table><thead><tr><td>アカウントID</td><td>表示設定</td><td>期限</td><td></td></tr></thead><tbody>";
 		userdata.forEach((d, i) => {
-			res2 += `<tr><td>@${d.name}</td><td>`;
+			res2 += `<tr><td class="ngid">@${d.name}</td><td>`;
 			switch (d.sta) {
 				case "rponly":
 					res2 += "リポストのみ";
@@ -130,18 +162,27 @@ const write = async () => {
 			res2 += `</td><td><button class="del2" value="${i}">削除</button></td></tr>`;
 		});
 		res2 += "</tbody></table>";
+		res2 += `<label><input type="checkbox" id="checkhide2"> IDを伏せる</label>`;
 		if (userdata.length > 1) {
-			res +=
-				`<div class="right"><a href="#">${userdata.length}件すべて削除</a></div>`;
+			res2 += `<div class="right"><a href="#" id="alldel2">${userdata.length}件すべて削除</a></div>`;
 		}
 		user.innerHTML = res2;
-		atags[1].onclick = () => {
-			if (confirm(`一部表示ユーザーをすべて削除します`)) {
-				userdata = [];
-				set();
-				write();
-			}
-		};
+		checkhide2 = document.getElementById("checkhide2");
+		ngids = user.getElementsByClassName("ngid");
+		if (checkhide2) {
+			checkhide2.onchange = () => {
+				hideid();
+			};
+		}
+		if (document.getElementById("alldel2")) {
+			document.getElementById("alldel2").onclick = () => {
+				if (confirm(`一部表示ユーザーをすべて削除します`)) {
+					userdata = [];
+					set();
+					write();
+				}
+			};
+		}
 	}
 	for (let i in del2s) {
 		del2s[i].onclick = () => {
@@ -154,6 +195,14 @@ const write = async () => {
 	}
 
 	opdata = (await chrome.storage.local.get("option")).option;
+	if (checkhide) {
+		checkhide.checked = opdata.hide;
+		if (opdata.hide) hideword();
+	}
+	if (checkhide2) {
+		checkhide2.checked = opdata.hide2;
+		if (opdata.hide2) hideid();
+	}
 	intervaltx.value = opdata.interval;
 	checknameng.checked = opdata.searchnameng;
 	checkreflesh.checked = opdata.reflesh;
@@ -167,6 +216,7 @@ const write = async () => {
 	checkneko.checked = opdata.neko;
 	checkinu.checked = opdata.inu;
 	checkkitune.checked = opdata.kitune;
+	checkahiru.checked = opdata.kitune;
 };
 
 intervaltx.onchange = () => {
@@ -175,6 +225,8 @@ intervaltx.onchange = () => {
 }
 save.onclick = async () => {
 	opdata = {
+		hide: checkhide.checked ?? false,
+		hide2: checkhide2.checked ?? false,
 		interval: intervaltx.value,
 		searchnameng: checknameng.checked,
 		reflesh: checkreflesh.checked,
@@ -188,6 +240,7 @@ save.onclick = async () => {
 		neko: checkneko.checked,
 		inu: checkinu.checked,
 		kitune: checkkitune.checked,
+		ahiru: checkahiru.checked,
 	};
 	await chrome.storage.local.set({ option: opdata });
 	write();
@@ -202,8 +255,19 @@ savetx.onclick = () => {
 }
 const reader = new FileReader();
 loadtx.onchange = e => {
-	reader.readAsText(e.target.files[0]);
+	try {
+		reader.readAsText(e.target.files[0]);
+	} catch (e) {
+		console.log(e);
+	}
 };
+const bool = v => {
+	if (v) {
+		return "◯";
+	} else {
+		return "✕";
+	}
+}
 reader.onload = async () => {
 	let file;
 	try {
@@ -216,14 +280,16 @@ reader.onload = async () => {
 		alert("読み込めませんでした");
 		return;
 	}
-	let searchbool;
-	if (file[2].searchnameng) searchbool = "あり";
-	else searchbool = "なし";
-	
-	if (confirm(
-		"以下の設定を読み込みます。\n\n" +
-		`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
-		`更新間隔: ${file[2].interval}ミリ秒、 検索単語名前非表示: ${searchbool}`)
+	if (
+		confirm(
+			"以下の設定を読み込みます。\n\n" +
+				`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
+				`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒\n` +
+				`検索単語名前非表示: ${bool(file[2].searchnameng)}、 閉じたときの自動更新：${bool(file[2].reflesh)}\n` +
+				`リプ：${bool(file[2].reply)}、 リポスト：${bool(file[2].reply)}、 いいね：${bool(file[2].reply)}、 インプレ：${bool(file[2].reply)}\n` +
+				`ブックマーク：${bool(file[2].reply)}、 フォロー：${bool(file[2].follow)}、 フォロワー：${bool(file[2].follower)}\n` +
+				`ねこ：${bool(file[2].neko)}、 いぬ：${bool(file[2].inu)}、 きつね：${bool(file[2].kitune)}、 アヒル：${bool(file[2].ahiru)}`
+		)
 	) {
 		await chrome.storage.local.set({ key: file[0] });
 		await chrome.storage.local.set({ userdata: file[1] });
@@ -250,8 +316,11 @@ document.onvisibilitychange = () => {
 	}
 	change = false;
 };
-write();
+chrome.runtime.onMessage.addListener(() => {
+	location.reload();
+});
 
+write();
 /*chrome.tabs.query({}, tabs => {
 	for (t of tabs) {
 		t.url = t.url ?? "";

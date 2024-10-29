@@ -6,30 +6,26 @@
     <title>非表示発射のド迫力X</title>
     <style>
         body {
-            margin-top: 20px;
-            margin-left: 30px;
-            line-height: 30px;
             font-size: 16px;
-        }
-        .conte {
+            white-space: nowrap;
             display: flex;
+            align-items: center;
             flex-direction: column;
-            width: fit-content;
-        }
-        .flex-item {
-            background: rgb(255, 255, 255);
-            border: 1px dashed #666;
-            padding: 20px;
-            padding-top: 15px;
-            padding-bottom: 15px;
+            min-width: fit-content;
             margin-bottom: 20px;
         }
-        
-        .flex-item:first-of-type {
-            width: fit-content;
+        .flex-item {
+            line-height: 30px;
+            border: 1px dashed #666;
+            padding: 15px 15px 10px 20px;
+            margin-bottom: 20px;
+            margin-right: 5px;
         }
-        .flex-item:not(:first-of-type) {
-            width: 100%-20px;
+        .flex-item:first-of-type {
+            line-height: 20px;
+            border: 0;
+            padding-top: 0;
+            padding-bottom: 0;
         }
         .option { margin: 10px; }
         .del, .del2 {
@@ -39,13 +35,12 @@
         }
         #interval { margin-left: 10px; margin-right: 5px; width: 80px;}
         label { cursor: pointer; }
-        .right { text-align: right; }
+        .right { float: right; }
         #loadtx { display: none;}
         .loadtx { text-decoration: underline; color: #0000FF;}
         table { 
             border: 0px;
             border-collapse: collapse;
-            white-space: nowrap;
             margin: 10px;
         }
         tr, td {
@@ -74,9 +69,11 @@
     </style>
 </head>
 <body>
+    <div class="conte">
+    <div class="flex-item">
     <h2>非表示一覧のド迫力X</h2>
     <p id="info"></p>
-    <div class="conte">
+    </div>
     <div id="flexbox" class="flex-item"></div>
     <div id="user" class="flex-item"></div>
     <div class="flex-item">
@@ -90,41 +87,34 @@
         <fieldset>
             <legend>数字を非表示にする</legend>
             <div>
-                <label><input type="checkbox" id="checkreply">
-                    リプライ</label>
-                <label><input type="checkbox" id="checkrepost">
-                    リポスト</label>
-                <label><input type="checkbox" id="checklike">
-                    いいね</label><br>
-                <label><input type="checkbox" id="checkimpre">
-                    インプレッション</label>
-                <label><input type="checkbox" id="checkbook">
-                    ブックマーク</label><br>
-                <label><input type="checkbox" id="checkfollow">
-                    フォロー</label>
-                <label><input type="checkbox" id="checkfollower">
-                    フォロワー</label>
+                <label><input type="checkbox" id="checkreply">リプライ</label>
+                <label><input type="checkbox" id="checkrepost">リポスト</label>
+                <label><input type="checkbox" id="checklike">いいね</label><br>
+                <label><input type="checkbox" id="checkimpre">インプレッション</label>
+                <label><input type="checkbox" id="checkbook">ブックマーク</label><br>
+                <label><input type="checkbox" id="checkfollow">フォロー</label>
+                <label><input type="checkbox" id="checkfollower">フォロワー</label>
             </div>
         </fieldset>
         <fieldset id="fieldreplace">
             <legend>削除したポストを置き換える</legend>
             <div>
-                <label><input type="checkbox" id="checkneko">
-                    ねこ</label>
-                <label><input type="checkbox" id="checkinu">
-                    いぬ</label>
-                <label><input type="checkbox" id="checkkitune">
-                    きつね</label>
+                <label><input type="checkbox" id="checkneko">ねこ</label>
+                <label><input type="checkbox" id="checkinu">いぬ</label>
+                <label><input type="checkbox" id="checkkitune">きつね</label>
+                <label style="color: #ccc"><input type="checkbox" id="checkahiru" disabled>アヒル（予定）</label>
             </div>
         </fieldset>
-        </div>
         <button id="save">保存</button>
+        </div>
     </div>
-    </div>
+    
+    <div>
     <a id="savetx" href="#">設定をテキストファイルで保存</a>　
     <span class="loadtx"><label>
         <input id="loadtx" type="file" accept=".txt">設定をテキストファイルで読み込み
-    </label></span><br>    
+    </label></span>
+    </div></div>
     <script src="option.js"></script>
 </body>
 </html>

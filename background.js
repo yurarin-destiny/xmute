@@ -2,6 +2,8 @@ chrome.runtime.onInstalled.addListener(async () => {
 	const data = (await chrome.storage.local.get("key")).key || [],
 		userdata = (await chrome.storage.local.get("userdata")).userdata || [],
 		optiondata = (await chrome.storage.local.get("option")).option || {
+			hide: false,
+			hide2: false,
 			interval: 300,
 			searchnameng: true,
 			reflesh: false,
@@ -16,6 +18,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 			neko: false,
 			inu: false,
 			kitune: false,
+			ahiru: false,
 		};
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata });

@@ -287,13 +287,12 @@ const getkitune = async () => {
 	}
 };
 const befinsert = (e, icon, name, id, date) => {
-	//e.querySelector(".r-16y2uox r-1wbh5a2 r-1ny4l3l").innerHTML = `
-	e.getElementsByClassName("r-16y2uox r-1wbh5a2 r-1ny4l3l")[0].innerHTML = `
-        <div class="css-175oi2r">
-            <div class="css-175oi2r r-18u37iz">
-                <div class="css-175oi2r r-1iusvr4 r-16y2uox r-ttdzmv"></div>
-            </div>
+	e.querySelector(".r-16y2uox .r-1wbh5a2 .r-1ny4l3l").innerHTML = `
+    <div class="css-175oi2r">
+        <div class="css-175oi2r r-18u37iz">
+            <div class="css-175oi2r r-1iusvr4 r-16y2uox r-ttdzmv"></div>
         </div>
+    </div>
 <div class="css-175oi2r r-18u37iz">
     <div class="css-175oi2r r-18kxxzh r-1wron08 r-onrtq4 r-1awozwy">
         <div class="css-175oi2r">
@@ -343,12 +342,12 @@ const befinsert = (e, icon, name, id, date) => {
                             <div class="css-175oi2r r-1awozwy r-18u37iz r-1wbh5a2 r-dnmrzs">
                                 <div class="css-175oi2r r-1wbh5a2 r-dnmrzs">
                                     <div class="css-175oi2r r-1awozwy r-18u37iz r-1wbh5a2 r-dnmrzs">
-                                        <div dir="ltr" class="css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-b88u0q r-1awozwy r-6koalj r-1udh08x r-3s2u2q" style="text-overflow: unset; color: rgb(15, 20, 25);">
+                                        <div class="css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-b88u0q r-1awozwy r-6koalj r-1udh08x r-3s2u2q" style="text-overflow: unset; color: rgb(15, 20, 25);">
                                             <span class="css-1jxf684 r-dnmrzs r-1udh08x r-3s2u2q r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc" style="text-overflow: unset;">
                                                 <span class="css-1jxf684 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc" style="text-overflow: unset;">${name}</span>
                                             </span>
                                         </div>
-                                        <div dir="ltr" class="css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-18u37iz r-1q142lx" style="text-overflow: unset; color: rgb(15, 20, 25);">
+                                        <div class="css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-18u37iz r-1q142lx" style="text-overflow: unset; color: rgb(15, 20, 25);">
                                             <span class="css-1jxf684 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-1awozwy r-xoduu5" style="text-overflow: unset;"></span>
                                         </div>
                                     </div>
@@ -357,11 +356,11 @@ const befinsert = (e, icon, name, id, date) => {
                             <div class="css-175oi2r r-18u37iz r-1wbh5a2 r-1ez5h0i">
                                 <div class="css-175oi2r r-1d09ksm r-18u37iz r-1wbh5a2">
                                     <div class="css-175oi2r r-1wbh5a2 r-dnmrzs">
-                                        <div dir="ltr" class="css-146c3p1 r-dnmrzs r-1udh08x r-3s2u2q r-bcqeeo r-1ttztb7 r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-18u37iz r-1wvb978" style="text-overflow: unset; color: rgb(83, 100, 113);">
+                                        <div class="css-146c3p1 r-dnmrzs r-1udh08x r-3s2u2q r-bcqeeo r-1ttztb7 r-qvutc0 r-37j5jr r-a023e6 r-rjixqe r-16dba41 r-18u37iz r-1wvb978" style="text-overflow: unset; color: rgb(83, 100, 113);">
                                             <span class="css-1jxf684 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc" style="text-overflow: unset;">@${id}</span>
                                         </div>
                                     </div>
-                                    <div dir="ltr" aria-hidden="true" class="css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-16dba41 r-1q142lx r-n7gxbd" style="text-overflow: unset; color: rgb(83, 100, 113);"><span class="css-1jxf684 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc" style="text-overflow: unset;">·</span></div>
+                                    <div aria-hidden="true" class="css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-16dba41 r-1q142lx r-n7gxbd" style="text-overflow: unset; color: rgb(83, 100, 113);"><span class="css-1jxf684 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc" style="text-overflow: unset;">·</span></div>
                                     <div class="css-175oi2r r-18u37iz r-1q142lx css-146c3p1 r-bcqeeo r-1ttztb7 r-qvutc0 r-1tl8opc r-a023e6 r-rjixqe r-16dba41 r-xoduu5 r-1q142lx r-1w6e6rj r-9aw3ui r-3s2u2q r-1loqt21" style="text-overflow: unset; color: rgb(83, 100, 113);">${date}</div>
                                 </div>
                             </div>
@@ -370,8 +369,8 @@ const befinsert = (e, icon, name, id, date) => {
                 </div>
             </div>
         </div>
-        <div aria-labelledby="id__nlz7oa8tycj id__ty3esfoezo" class="css-175oi2r r-9aw3ui r-1s2bzr4" id="id__x1dulrnw08a">
-            <img style="margin: auto; padding-top: 125px; padding-bottom: 125px;" src="${chrome.runtime.getURL("image/loading.gif")}">
+        <div class="css-175oi2r r-9aw3ui r-1s2bzr4">
+            <img style="margin: auto; padding-top: 20%; padding-bottom: 20%;" src="${chrome.runtime.getURL("image/loading.gif")}">
         </div>
     </div>
 </div>`;
@@ -379,28 +378,27 @@ const befinsert = (e, icon, name, id, date) => {
 const insert = async (e, url) => {
 	e.getElementsByClassName("css-175oi2r r-9aw3ui r-1s2bzr4")[0].innerHTML = `
 	<div class="css-175oi2r r-9aw3ui">
-		<div class="css-175oi2r">
-			<div class="css-175oi2r">
-				<div class="css-175oi2r r-1ets6dv r-1phboty r-rs99b7 r-1867qdf r-1udh08x r-o7ynqc r-6416eg r-1peqgm7 r-1ny4l3l">
-					<div class="css-175oi2r">
-						<div class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu">
-							<a href="${url}" target="_blank" role="link" class="css-175oi2r r-1pi2tsx r-1ny4l3l r-1loqt21">
-								<div class="css-175oi2r r-1adg3ll r-1udh08x">
-									<div class="r-1adg3ll r-13qz1uu" style="padding-bottom: 60%;"></div>
-									<div class="r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-ipm5af r-13qz1uu">
-										<div class="css-175oi2r r-1mlwlqe r-1udh08x r-417010 r-1p0dtai r-1d2f490 r-u8s1d r-zchlnj r-ipm5af" style="margin: 0px;">
-											<div class="css-175oi2r r-1niwhzg r-vvn4in r-u6sd8q r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-zchlnj r-ipm5af r-13qz1uu r-1wyyakw r-4gszlv" style="background-image: url(&quot;${url}&quot;);"></div>
-										</div>
-									</div>
-								</div>
-							</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	`;
+        <div class="css-175oi2r">
+            <div class="css-175oi2r">
+                <div class="css-175oi2r r-1ets6dv r-1phboty r-rs99b7 r-1867qdf r-1udh08x r-o7ynqc r-6416eg r-1peqgm7 r-1ny4l3l">
+                    <div class="css-175oi2r">
+                        <div class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu">
+                            <a href="${url}" target="_blank" role="link" class="css-175oi2r r-1pi2tsx r-1ny4l3l r-1loqt21">
+                                <div class="css-175oi2r r-1adg3ll r-1udh08x">
+                                    <div class="r-1adg3ll r-13qz1uu" style="padding-bottom: 60%;"></div>
+                                    <div class="r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-ipm5af r-13qz1uu">
+                                        <div class="css-175oi2r r-1mlwlqe r-1udh08x r-417010 r-1p0dtai r-1d2f490 r-u8s1d r-zchlnj r-ipm5af" style="margin: 0px;">
+                                            <div class="css-175oi2r r-1niwhzg r-vvn4in r-u6sd8q r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-zchlnj r-ipm5af r-13qz1uu r-1wyyakw r-4gszlv" style="background-image: url(&quot;${url}&quot;);"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>`;
 };
 const rem = async e => {
 	if (!opdata.neko && !opdata.inu && !opdata.kitune) {
@@ -424,5 +422,10 @@ const rem = async e => {
 			insert(e, await getkitune());
 			break;
 		}
+		// if (opdata.ahiru && dice == 3) {
+		// 	befinsert(e, chrome.runtime.getURL("image/ahiru.jpg"), "ahiru", "ahiru", "1月1日");
+		// 	insert(e, await getahiru());
+		// 	break;
+		// }
 	}
 }

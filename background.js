@@ -7,6 +7,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 			interval: 300,
 			searchnameng: true,
 			reflesh: false,
+			trend: false,
 			reply: false,
 			repost: false,
 			like: false,

@@ -6,6 +6,7 @@ const info = document.getElementById("info"),
 	intervaltx = document.getElementById("interval"),
 	checknameng = document.getElementById("checknameng"),
 	checkreflesh = document.getElementById("checkreflesh"),
+	checktrend = document.getElementById("checktrend"),
 	checkreply = document.getElementById("checkreply"),
 	checkrepost = document.getElementById("checkrepost"),
 	checklike = document.getElementById("checklike"),
@@ -206,6 +207,7 @@ const write = async () => {
 	intervaltx.value = opdata.interval;
 	checknameng.checked = opdata.searchnameng;
 	checkreflesh.checked = opdata.reflesh;
+	checktrend.checked = opdata.trend;
 	checkreply.checked = opdata.reply;
 	checkrepost.checked = opdata.repost;
 	checklike.checked = opdata.like;
@@ -225,11 +227,12 @@ intervaltx.onchange = () => {
 }
 save.onclick = async () => {
 	opdata = {
-		hide: checkhide.checked ?? false,
-		hide2: checkhide2.checked ?? false,
+		hide: checkhide?.checked,
+		hide2: checkhide2?.checked,
 		interval: intervaltx.value,
 		searchnameng: checknameng.checked,
 		reflesh: checkreflesh.checked,
+		trend: checktrend.checked,
 		reply: checkreply.checked,
 		repost: checkrepost.checked,
 		like: checklike.checked,
@@ -242,6 +245,7 @@ save.onclick = async () => {
 		kitune: checkkitune.checked,
 		ahiru: checkahiru.checked,
 	};
+	console.log(opdata.hide);
 	await chrome.storage.local.set({ option: opdata });
 	write();
 	changefun();
@@ -285,7 +289,7 @@ reader.onload = async () => {
 			"以下の設定を読み込みます。\n\n" +
 				`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
 				`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒\n` +
-				`検索単語名前非表示: ${bool(file[2].searchnameng)}、 閉じたときの自動更新：${bool(file[2].reflesh)}\n` +
+				`検索単語名前非表示: ${bool(file[2].searchnameng)}、 閉じたときの自動更新：${bool(file[2].reflesh)}、 トレンド消去：${bool(file[2].trend)}\n` +
 				`リプ：${bool(file[2].reply)}、 リポスト：${bool(file[2].reply)}、 いいね：${bool(file[2].reply)}、 インプレ：${bool(file[2].reply)}\n` +
 				`ブックマーク：${bool(file[2].reply)}、 フォロー：${bool(file[2].follow)}、 フォロワー：${bool(file[2].follower)}\n` +
 				`ねこ：${bool(file[2].neko)}、 いぬ：${bool(file[2].inu)}、 きつね：${bool(file[2].kitune)}、 アヒル：${bool(file[2].ahiru)}`

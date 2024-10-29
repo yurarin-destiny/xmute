@@ -42,6 +42,12 @@ onload = async () => {
 	await chrome.storage.local.set({ userdata });
 
 	setInterval(() => {
+		console.log();
+		if (opdata.trend) {
+			for (let v of document.querySelectorAll('[data-testid="trend"]')) {
+				v.remove();
+			}
+		}
 		for (let t of tweets) {
 			func1(t);
 		}
@@ -192,19 +198,22 @@ chrome.runtime.onMessage.addListener(async () => {
 	}
 });
 const func1 = t => {
-	for (let d of data) {
-		if (!d.regex) {
-			if (t.textContent.includes(d.word)) {
-				rem(t);
-				console.log("ワード削除: " + d.word);
-			}
-		} else {
-			if (new RegExp(d.word).test(t.textContent)) {
-				rem(t);
-				console.log("ワード削除: " + d.word);
+	if (location.href.includes("explore")) {
+		return;
+	}
+		for (let d of data) {
+			if (!d.regex) {
+				if (t.textContent.includes(d.word)) {
+					rem(t);
+					console.log("ワード削除: " + d.word);
+				}
+			} else {
+				if (new RegExp(d.word).test(t.textContent)) {
+					rem(t);
+					console.log("ワード削除: " + d.word);
+				}
 			}
 		}
-	}
 	// メディアポストのみ表示
 	for (let d of userdata) {
 		if (
@@ -229,9 +238,17 @@ const func2 = ani => {
 	}
 	return fetchurl[fetchcount - 1];
 }
+const gifneko = () => {
+	let dice = Math.round(Math.random() * 19);
+	if (dice < 19) {
+		return "https://cataas.com/cat";
+	} else {
+		return "https://cataas.com/cat/gif";
+	}
+}
 const getneko = async () => {
 	if (fetchurl.length <= fetchlimit) {
-		const fet = await fetch("https://cataas.com/cat").catch(() => "");
+		const fet = await fetch(gifneko()).catch(() => "");
 		if (!fet.ok) {
 			return chrome.runtime.getURL("image/error_neko.jpg");
 		}

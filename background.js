@@ -8,6 +8,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 			searchnameng: true,
 			reflesh: false,
 			trend: false,
+			except: false,
 			reply: false,
 			repost: false,
 			like: false,
@@ -24,7 +25,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata });
 	await chrome.storage.local.set({ option: optiondata });
-	chrome.storage.local.remove("select");
 	await chrome.contextMenus.removeAll();
 	chrome.contextMenus.create({
 		id: "pop",

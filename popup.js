@@ -8,15 +8,37 @@ const radio = document.getElementsByName("radio"),
 	btn1 = document.getElementById("btn1"),
 	btn2 = document.getElementById("btn2"),
 	info = document.getElementById("info");
-let limi = "",
-	res = "",
+let res = "",
 	data,
 	userdata,
-	change = false;
+	change = false,
+	exdata;
 
-chrome.storage.local.get("select", d => (newword.value = d.select || ""));
+chrome.storage.local.get("select", d => newword.value = d.select || "");
+chrome.storage.local.get("editdata", d => {
+	if (d.editdata?.word) {
+		newword.value = d.editdata.word || "";
+		if (d.editdata.regex) {
+			checkreg.checked = true;
+		}
+		if (d.editdata.limit) {
+			checklim.checked = true;
+			lim.disabled = false;
+			const today = new Date();
+			const f = d.editdata.limit;
+			const futureDate = new Date(`${f.substring(0, 4)}-${f.substring(5, 7)}-${f.substring(8, 10)}`);
+			lim.value = Math.ceil((futureDate - today) / (1000 * 60 * 60 * 24));
+		}
+		exdata = d.editdata;
+	}
+});
+chrome.storage.local.remove("select");
+chrome.storage.local.remove("editdata");
 
 const gettime = p => {
+	if (!p) {
+		return "";
+	}
 	let now = new Date();
 	now.setDate(now.getDate() + Number(p));
 	let y = now.getFullYear(),
@@ -54,20 +76,21 @@ const get = (async () => {
 	userdata = userdata.filter(d => comparetime(d.limit) != "past");
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata });
-	info.innerText = `登録ワード数: ${data.length}
-		登録ユーザー数: ${userdata.length}`;
+	info.innerText = `登録ワード数: ${data.length}\n登録ユーザー数: ${userdata.length}`;
 })();
 radio[0].onchange = () => {
 	newword.value = newuser.value;
 	newuser.value = "";
 	newuser.disabled = true;
 	newword.disabled = false;
+	
 };
 radio[1].onchange = () => {
 	newuser.value = newword.value;
 	newword.value = "";
 	newuser.disabled = false;
 	newword.disabled = true;
+	exdata = null;
 };
 checklim.onclick = () => {
 	lim.disabled = !lim.disabled;
@@ -88,7 +111,7 @@ btn1.onclick = async () => {
 		const val = newword.value;
 		switch (val) {
 			case "":
-				info.innerHTML = "入力してください";
+				info.innerText = "入力してください";
 				return;
 			case "ド迫力":
 			case "ガンドハ":
@@ -128,19 +151,34 @@ btn1.onclick = async () => {
 				open("https://jp.louisvuitton.com/", "_blank");
 				break;
 		}
-		if (data.some(d => d.word == val)) {
-			info.innerHTML = `${val}は登録済みです`;
-			return;
+		if (!exdata) {
+			if (data.some(d => d.word == val)) {
+				info.innerText = `${val}は登録済みです`;
+				return;
+			}
+			res = `編集完了\nワード： ${val}\n`;
+		} else {
+			res = `発射完了\nワード： ${val}\n`;
 		}
-		
-		res = `発射完了<br>ワード： ${val}<br>`;
-		if (checkreg.checked) res += `正規表現： あり<br>`;
-		else res += `正規表現： なし<br>`;
+		if (checkreg.checked) res += `正規表現： あり\n`;
+		else res += `正規表現： なし\n`;
 		if (checklim.checked) {
 			res += `期限： ${gettime(lim.value)}まで`;
-			limi = gettime(lim.value);
 		} else res += `期限： なし`;
-		data.push({ word: val, regex: checkreg.checked, limit: limi });
+		console.log(data);
+		if (!exdata) {
+			data.push({ word: val, regex: checkreg.checked, limit: gettime(lim.value) });
+		} else {
+			data = data.map(d => {
+				if (JSON.stringify(d) == JSON.stringify(exdata)) {
+					return { word: newword.value, regex: checkreg.checked, limit: gettime(lim.value) };
+				} else {
+					return d;
+				}
+			});
+		}
+		console.log(data);
+		
 		await chrome.storage.local.set({ key: data });
 		change = true;
 		chrome.storage.local.set({ select: "" });
@@ -149,15 +187,15 @@ btn1.onclick = async () => {
 		newuser.value = newuser.value.replace("@", "");
 		const val = newuser.value;
 		if (!val) {
-			info.innerHTML = "入力してください";
+			info.innerText = "入力してください";
 			return;
 		}
 		if (/[^0-9a-zA-Z_]/.test(val)) {
-			info.innerHTML = "英数字（ _ を含む）IDを入力してください";
+			info.innerText = "英数字（ _ を含む）IDを入力してください";
 			return;
 		}
 		if (userdata.some(d => d.name == val) && userdata.some(d => d.sta == select.value)) {
-			info.innerHTML = `@${val}（${selectval(select.value)}）は登録済みです`;
+			info.innerText = `@${val}（${selectval(select.value)}）は登録済みです`;
 			return;
 		}
 
@@ -165,21 +203,19 @@ btn1.onclick = async () => {
 		res += `${selectval(select.value)}<br>`;
 		if (checklim.checked) {
 			res += `期限： ${gettime(lim.value)}まで`;
-			limi = gettime(lim.value);
 		} else res += `期限： なし`;
 
-		userdata.push({ name: val, limit: limi, sta: select.value });
+		userdata.push({ name: val, limit: gettime(lim.value), sta: select.value });
 		await chrome.storage.local.set({ userdata: userdata });
 		change = true;
 		chrome.storage.local.set({ select: "" });
 	}
-	info.innerHTML = res;
-	
+	info.innerText = res;
 };
 btn2.onclick = () => chrome.runtime.openOptionsPage();
 
-document.onvisibilitychange = () => {
-	chrome.tabs.query({}, tabs => {
+document.onvisibilitychange = async() => {
+	await chrome.tabs.query({}, tabs => {
 		for (t of tabs) {
 			if (t.url && change) {
 				if (t.url.includes("https://x.com")) {

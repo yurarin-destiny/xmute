@@ -28,8 +28,7 @@
             padding-bottom: 0;
         }
         .option { margin: 10px; }
-        .del, .del2 {
-            margin-left: 10px;
+        button {
             padding-left: 10px;
             padding-right: 10px;
         }
@@ -46,6 +45,9 @@
         tr, td {
             padding-left: 20px;
             padding-right: 20px;
+        }
+        td:nth-last-child(-n+2) {
+            padding-left: 0px;
         }
         td:nth-child(1) { width: 180px; }
         td:nth-child(2) { width: 140px; }
@@ -86,6 +88,8 @@
             設定変更後にXのタブを更新する</label><br>
         <label><input type="checkbox" id="checktrend">
             トレンドを表示しない</label><br>
+        <label><input type="checkbox" id="checkexcept">
+            NGワード検索時そのワードのみ除外する</label><br>
         <fieldset>
             <legend>数字を非表示にする</legend>
             <div>

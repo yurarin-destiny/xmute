@@ -1,5 +1,6 @@
 const info = document.getElementById("info"),
 	flexbox = document.getElementById("flexbox"),
+	edits = document.getElementsByClassName("edit"),
 	dels = document.getElementsByClassName("del"),
 	del2s = document.getElementsByClassName("del2"),
 	user = document.getElementById("user"),
@@ -7,6 +8,7 @@ const info = document.getElementById("info"),
 	checknameng = document.getElementById("checknameng"),
 	checkreflesh = document.getElementById("checkreflesh"),
 	checktrend = document.getElementById("checktrend"),
+	checkexcept = document.getElementById("checkexcept"),
 	checkreply = document.getElementById("checkreply"),
 	checkrepost = document.getElementById("checkrepost"),
 	checklike = document.getElementById("checklike"),
@@ -90,10 +92,11 @@ const write = async () => {
 	} else {
 		res += "<table><thead><tr><td>ワード</td><td>期限</td><td></td></tr></thead><tbody>";
 		data.forEach((d, i) => {
-			if (d.regex) res += `<tr><td class="ngword"><b>/${d.word}/</b></td>`;
+			if (d.regex) res += `<tr><td><b class="ngword">/${d.word}/</b></td>`;
 			else res += `<tr><td class="ngword">${d.word}</td>`;
 			if (d.limit) res += `<td>${d.limit}</td>`;
 			else res += "<td>-</td>";
+			res += `<td><button class="edit" value="${i}">編集</button></td>`;
 			res += `<td><button class="del" value="${i}">削除</button></td>`;
 		});
 		res += "</tbody></table>";
@@ -118,6 +121,13 @@ const write = async () => {
 				}
 			};
 		}
+	}
+	for (let i in edits) {
+		edits[i].onclick = () => {
+			const editdata = { word: data[i].word, regex: data[i].regex, limit: data[i].limit };
+			chrome.storage.local.set({ editdata });
+			chrome.action.openPopup();
+		};
 	}
 	for (let i in dels) {
 		dels[i].onclick = () => {
@@ -208,6 +218,7 @@ const write = async () => {
 	checknameng.checked = opdata.searchnameng;
 	checkreflesh.checked = opdata.reflesh;
 	checktrend.checked = opdata.trend;
+	checkexcept.checked = opdata.except;
 	checkreply.checked = opdata.reply;
 	checkrepost.checked = opdata.repost;
 	checklike.checked = opdata.like;
@@ -233,6 +244,7 @@ save.onclick = async () => {
 		searchnameng: checknameng.checked,
 		reflesh: checkreflesh.checked,
 		trend: checktrend.checked,
+		except: checkexcept.checked,
 		reply: checkreply.checked,
 		repost: checkrepost.checked,
 		like: checklike.checked,
@@ -245,7 +257,6 @@ save.onclick = async () => {
 		kitune: checkkitune.checked,
 		ahiru: checkahiru.checked,
 	};
-	console.log(opdata.hide);
 	await chrome.storage.local.set({ option: opdata });
 	write();
 	changefun();
@@ -288,8 +299,8 @@ reader.onload = async () => {
 		confirm(
 			"以下の設定を読み込みます。\n\n" +
 				`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
-				`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒\n` +
-				`検索単語名前非表示: ${bool(file[2].searchnameng)}、 閉じたときの自動更新：${bool(file[2].reflesh)}、 トレンド消去：${bool(file[2].trend)}\n` +
+				`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒、 検索単語名前非表示: ${bool(file[2].searchnameng)}\n` +
+				`閉じたときの自動更新：${bool(file[2].reflesh)}、 トレンド消去：${bool(file[2].trend)}、 NGワード検索時除外：${bool(file[2].except)}\n` +
 				`リプ：${bool(file[2].reply)}、 リポスト：${bool(file[2].reply)}、 いいね：${bool(file[2].reply)}、 インプレ：${bool(file[2].reply)}\n` +
 				`ブックマーク：${bool(file[2].reply)}、 フォロー：${bool(file[2].follow)}、 フォロワー：${bool(file[2].follower)}\n` +
 				`ねこ：${bool(file[2].neko)}、 いぬ：${bool(file[2].inu)}、 きつね：${bool(file[2].kitune)}、 アヒル：${bool(file[2].ahiru)}`
@@ -321,7 +332,7 @@ document.onvisibilitychange = () => {
 	change = false;
 };
 chrome.runtime.onMessage.addListener(() => {
-	location.reload();
+	write();
 });
 
 write();

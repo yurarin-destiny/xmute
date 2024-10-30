@@ -40,7 +40,8 @@ onload = async () => {
 	userdata = userdata.filter(d => comparetime(d.limit) != "past");
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata });
-
+	
+	
 	setInterval(() => {
 		console.log();
 		if (opdata.trend) {
@@ -90,7 +91,7 @@ onload = async () => {
 				} else {
 					closest = ".r-qklmqi";
 				}
-				if (m.closest(closest).textContent.includes(d.name) && d.sta == "mediaexcept") {
+				if (m.closest(closest)?.textContent.includes(d.name) && d.sta == "mediaexcept") {
 					rem(m.closest(closest));
 					console.log("メディアポスト削除: " + d.name);
 				}
@@ -123,7 +124,7 @@ onload = async () => {
 				} else {
 					closest = ".r-qklmqi";
 				}
-				if (w.closest(closest).textContent.includes(d.name) && d.sta == "worddelete") {
+				if (w.closest(closest)?.textContent.includes(d.name) && d.sta == "worddelete") {
 					if (
 						w.closest(closest).getElementsByClassName("r-1867qdf r-1udh08x r-o7ynqc")
 							.length == 0
@@ -198,22 +199,22 @@ chrome.runtime.onMessage.addListener(async () => {
 	}
 });
 const func1 = t => {
-	if (location.href.includes("explore")) {
-		return;
-	}
-		for (let d of data) {
-			if (!d.regex) {
-				if (t.textContent.includes(d.word)) {
-					rem(t);
-					console.log("ワード削除: " + d.word);
-				}
-			} else {
-				if (new RegExp(d.word).test(t.textContent)) {
-					rem(t);
-					console.log("ワード削除: " + d.word);
-				}
+	for (let d of data) {
+		if (opdata.except && t.textContent.includes(query) && d.word == query) {
+			continue;
+		}
+		if (!d.regex) {
+			if (t.textContent.includes(d.word)) {
+				rem(t);
+				console.log("ワード削除: " + d.word);
+			}
+		} else {
+			if (new RegExp(d.word).test(t.textContent)) {
+				rem(t);
+				console.log("ワード削除: " + d.word);
 			}
 		}
+	}
 	// メディアポストのみ表示
 	for (let d of userdata) {
 		if (
@@ -304,7 +305,7 @@ const getkitune = async () => {
 	}
 };
 const befinsert = (e, icon, name, id, date) => {
-	e.querySelector(".r-16y2uox .r-1wbh5a2 .r-1ny4l3l").innerHTML = `
+	e.getElementsByClassName("r-16y2uox r-1wbh5a2 r-1ny4l3l")[0].innerHTML = `
     <div class="css-175oi2r">
         <div class="css-175oi2r r-18u37iz">
             <div class="css-175oi2r r-1iusvr4 r-16y2uox r-ttdzmv"></div>
@@ -386,8 +387,8 @@ const befinsert = (e, icon, name, id, date) => {
                 </div>
             </div>
         </div>
-        <div class="css-175oi2r r-9aw3ui r-1s2bzr4">
-            <img style="margin: auto; padding-top: 20%; padding-bottom: 20%;" src="${chrome.runtime.getURL("image/loading.gif")}">
+        <div class="css-175oi2r r-9aw3ui r-1s2bzr4" id="id__x1dulrnw08a">
+            <img style="margin: auto; padding-top: 15vw; padding-bottom: 15vw;" src="${chrome.runtime.getURL("image/loading.gif")}">
         </div>
     </div>
 </div>`;

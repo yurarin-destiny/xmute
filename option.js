@@ -23,7 +23,9 @@ const info = document.getElementById("info"),
 	checkahiru = document.getElementById("checkahiru"),
 	save = document.getElementById("save"),
 	savetx = document.getElementById("savetx"),
-	loadtx = document.getElementById("loadtx");
+	loadtx = document.getElementById("loadtx"),
+	ps1 = document.getElementById("ps1"),
+	ps2 = document.getElementById("ps2");
 let data, userdata, opdata,
 	change = false,
 	tid,
@@ -343,3 +345,38 @@ write();
 	}
 	console.log(tabs);
 });*/
+
+ps1.innerText = 
+	`Special Thanks:
+	・MDN Web Docs
+	・Chrome for Developers
+	・ChatGPT
+	・侍エンジニア
+	・JavaScript Primer
+	・現代の JavaScript チュートリアル
+	・Let'sプログラミング
+	`;
+ps2.innerText = 
+	`(1.0.6)
+    ・動物画像読み込み時の高さを調整。
+	・ポップアップにバージョン表示。
+	・オプションページに謝辞と更新履歴を追加。
+    
+    (1.0.5)
+    ・オプションページの見た目を変えた。
+    ・登録したワードを編集できるようにした。
+    ・登録したワード、IDを伏せられるようにした。
+    ・更新間隔を最短50ミリ秒からにした。
+    ・トレンドを非表示にできるようにした。
+    ・NGワードで検索した場合、そのワードは除外するか設定できるようにした。
+    ・リプ、リポスト、いいね、インプレ、フォロー、フォロワーの数字を非表示にできるようにした。
+    ・非表示にしたポストを猫、犬、きつねにできるようにし、複数選択でいずれかがランダムで出るようにした。
+    
+    (1.0.4)
+    ・正規表現に対応してなかったので対応しました。
+    ・設定変更後にウィンドウを閉じると自動でXのタブを更新するかどうか設定できるようにしました。
+    ・リプされたポストがワード削除の対象になってなかったので対応しました。
+    
+    (1.0.3)
+    公開
+`;

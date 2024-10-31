@@ -68,6 +68,17 @@
             margin-left: 5px;
             margin-right: 5px;
         }
+        hr {
+            border-top: 1px dashed #aaa;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        #ps1, #ps2 {
+            white-space: normal;
+            inline-size: 0;
+            min-inline-size: fit-content;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -120,7 +131,12 @@
     <span class="loadtx"><label>
         <input id="loadtx" type="file" accept=".txt">設定をテキストファイルで読み込み
     </label></span>
-    </div></div>
+    </div><br>
+    <hr>
+    <div id="ps1"></div>
+    <hr>
+    <div id="ps2"></div>
+    </div>
     <script src="option.js"></script>
 </body>
 </html>

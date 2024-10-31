@@ -388,7 +388,7 @@ const befinsert = (e, icon, name, id, date) => {
             </div>
         </div>
         <div class="css-175oi2r r-9aw3ui r-1s2bzr4" id="id__x1dulrnw08a">
-            <img style="margin: auto; padding-top: 15vw; padding-bottom: 15vw;" src="${chrome.runtime.getURL("image/loading.gif")}">
+            <img style="margin: auto; padding-top: 10vh; padding-bottom: 10vh;" src="${chrome.runtime.getURL("image/loading.gif")}">
         </div>
     </div>
 </div>`;

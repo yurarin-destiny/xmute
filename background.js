@@ -4,7 +4,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 		optiondata = (await chrome.storage.local.get("option")).option || {
 			hide: false,
 			hide2: false,
-			interval: 300,
+			interval: 250,
 			searchnameng: true,
 			reflesh: false,
 			trend: false,

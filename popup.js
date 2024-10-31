@@ -199,8 +199,8 @@ btn1.onclick = async () => {
 			return;
 		}
 
-		res = `発射完了<br>ユーザー： @${val}<br>`;
-		res += `${selectval(select.value)}<br>`;
+		res = `発射完了\nユーザー： @${val}\n`;
+		res += `${selectval(select.value)}\n`;
 		if (checklim.checked) {
 			res += `期限： ${gettime(lim.value)}まで`;
 		} else res += `期限： なし`;

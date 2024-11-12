@@ -1,4 +1,7 @@
-const radio = document.getElementsByName("radio"),
+const power = document.getElementById("power"),
+	conte = document.getElementById("conte"),
+	ver = document.getElementById("ver"),
+	radio = document.getElementsByName("radio"),
 	checkreg = document.getElementById("checkreg"),
 	newword = document.getElementById("word"),
 	select = document.getElementById("select"),
@@ -14,6 +17,7 @@ let res = "",
 	change = false,
 	exdata;
 
+ver.innerText = chrome.runtime.getManifest().version;
 chrome.storage.local.get("select", d => newword.value = d.select || "");
 chrome.storage.local.get("editdata", d => {
 	if (d.editdata?.word) {
@@ -30,6 +34,12 @@ chrome.storage.local.get("editdata", d => {
 			lim.value = Math.ceil((futureDate - today) / (1000 * 60 * 60 * 24));
 		}
 		exdata = d.editdata;
+	}
+});
+chrome.storage.local.get("power", p => {
+	power.checked = p.power && true;
+	if (!p.power) {
+		conte.classList.add("dimmed");
 	}
 });
 chrome.storage.local.remove("select");
@@ -78,6 +88,22 @@ const get = (async () => {
 	await chrome.storage.local.set({ userdata });
 	info.innerText = `登録ワード数: ${data.length}\n登録ユーザー数: ${userdata.length}`;
 })();
+power.onclick = async () => {
+	if (power.checked) {
+		await chrome.storage.local.set({ power: true });
+		conte.classList.remove("dimmed");
+	} else {
+		await chrome.storage.local.set({ power: false });
+		conte.classList.add("dimmed");
+	}
+	await chrome.tabs.query({}, tabs => {
+		for (t of tabs) {
+			if (t.url?.includes("https://x.com")) {
+				chrome.tabs.sendMessage(t.id, "");
+			}
+		}
+	});
+};
 radio[0].onchange = () => {
 	newword.value = newuser.value;
 	newuser.value = "";

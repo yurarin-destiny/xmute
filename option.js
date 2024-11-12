@@ -9,6 +9,8 @@ const info = document.getElementById("info"),
 	checkreflesh = document.getElementById("checkreflesh"),
 	checktrend = document.getElementById("checktrend"),
 	checkexcept = document.getElementById("checkexcept"),
+	checkblock = document.getElementById("checkblock"),
+	radcommu = document.getElementById("commu"),
 	checkreply = document.getElementById("checkreply"),
 	checkrepost = document.getElementById("checkrepost"),
 	checklike = document.getElementById("checklike"),
@@ -21,6 +23,7 @@ const info = document.getElementById("info"),
 	checkinu = document.getElementById("checkinu"),
 	checkkitune = document.getElementById("checkkitune"),
 	checkahiru = document.getElementById("checkahiru"),
+	checknekogirl = document.getElementById("checknekogirl"),
 	save = document.getElementById("save"),
 	savetx = document.getElementById("savetx"),
 	loadtx = document.getElementById("loadtx"),
@@ -221,6 +224,8 @@ const write = async () => {
 	checkreflesh.checked = opdata.reflesh;
 	checktrend.checked = opdata.trend;
 	checkexcept.checked = opdata.except;
+	checkblock.checked = opdata.block;
+	radcommu.commu.value = opdata.commu;
 	checkreply.checked = opdata.reply;
 	checkrepost.checked = opdata.repost;
 	checklike.checked = opdata.like;
@@ -231,7 +236,8 @@ const write = async () => {
 	checkneko.checked = opdata.neko;
 	checkinu.checked = opdata.inu;
 	checkkitune.checked = opdata.kitune;
-	checkahiru.checked = opdata.kitune;
+	checkahiru.checked = opdata.ahiru;
+	checknekogirl.checked = opdata.nekogirl;
 };
 
 intervaltx.onchange = () => {
@@ -247,6 +253,8 @@ save.onclick = async () => {
 		reflesh: checkreflesh.checked,
 		trend: checktrend.checked,
 		except: checkexcept.checked,
+		block: checkblock.checked,
+		commu: radcommu.commu.value,
 		reply: checkreply.checked,
 		repost: checkrepost.checked,
 		like: checklike.checked,
@@ -258,6 +266,7 @@ save.onclick = async () => {
 		inu: checkinu.checked,
 		kitune: checkkitune.checked,
 		ahiru: checkahiru.checked,
+		nekogirl: checknekogirl.checked,
 	};
 	await chrome.storage.local.set({ option: opdata });
 	write();
@@ -285,6 +294,16 @@ const bool = v => {
 		return "✕";
 	}
 }
+const commuval = v => {
+	switch (v) {
+		case "none":
+			return "なし";
+		case "tx":
+			return "文章のみ";
+		case "media":
+			return "文章とメディア";
+	}
+}
 reader.onload = async () => {
 	let file;
 	try {
@@ -300,12 +319,14 @@ reader.onload = async () => {
 	if (
 		confirm(
 			"以下の設定を読み込みます。\n\n" +
-				`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
-				`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒、 検索単語名前非表示: ${bool(file[2].searchnameng)}\n` +
-				`閉じたときの自動更新：${bool(file[2].reflesh)}、 トレンド消去：${bool(file[2].trend)}、 NGワード検索時除外：${bool(file[2].except)}\n` +
-				`リプ：${bool(file[2].reply)}、 リポスト：${bool(file[2].reply)}、 いいね：${bool(file[2].reply)}、 インプレ：${bool(file[2].reply)}\n` +
-				`ブックマーク：${bool(file[2].reply)}、 フォロー：${bool(file[2].follow)}、 フォロワー：${bool(file[2].follower)}\n` +
-				`ねこ：${bool(file[2].neko)}、 いぬ：${bool(file[2].inu)}、 きつね：${bool(file[2].kitune)}、 アヒル：${bool(file[2].ahiru)}`
+			`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
+			`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒、 検索単語名前非表示: ${bool(file[2].searchnameng)}\n` +
+			`閉じたときの自動更新：${bool(file[2].reflesh)}、 トレンド消去：${bool(file[2].trend)}、 NGワード検索時除外：${bool(file[2].except)}\n` +
+			`ブロックしてきたアカウントのポスト非表示：${bool(file[2].block)}\n` +
+			`コミュニティノートポスト：${ commuval(file[2].commu)}\n` +
+			`リプ：${bool(file[2].reply)}、 リポスト：${bool(file[2].reply)}、 いいね：${bool(file[2].reply)}、 インプレ：${bool(file[2].reply)}\n` +
+			`ブックマーク：${bool(file[2].reply)}、 フォロー：${bool(file[2].follow)}、 フォロワー：${bool(file[2].follower)}\n` +
+			`ねこ：${bool(file[2].neko)}、 いぬ：${bool(file[2].inu)}、 きつね：${bool(file[2].kitune)}、 食べ物：${bool(file[2].ahiru)}、 猫耳女子：${bool(file[2].nekogirl)}`
 		)
 	) {
 		await chrome.storage.local.set({ key: file[0] });
@@ -346,8 +367,14 @@ write();
 	console.log(tabs);
 });*/
 
-ps1.innerText = 
-	`Special Thanks:
+ps1.innerText = `使用している画像API
+	・Cat as a service (CATAAS)
+	・Dog CEO
+	・RandomFox
+	・foodish-api.com
+	・nekos.best
+	
+	Special Thanks:
 	・MDN Web Docs
 	・Chrome for Developers
 	・ChatGPT
@@ -356,8 +383,18 @@ ps1.innerText =
 	・現代の JavaScript チュートリアル
 	・Let'sプログラミング
 	`;
-ps2.innerText = 
-	`(1.0.6)
+ps2.innerText = `(1.0.8)
+	・絵文字に対応。
+	・コミュニティノートのメディアが非表示にできないのを修正。
+	・ポップアップ右上をOFFで薄くなるようにした。
+	
+	(1.0.7)
+	・コミュニティノートがついたポストの文章メディアを消せるか設定できるようにした。
+	・代替ツイートに食べ物と猫耳女子を追加。
+	・ブロックしてきたアカウントのポストを非表示にできるようにした。
+	・ポップアップ右上に電源ボタンを追加。
+	
+	(1.0.6)
 	・動物画像読み込み時の高さを調整。
 	・ポップアップにバージョン表示。
 	・オプションページに謝辞と更新履歴を追加。

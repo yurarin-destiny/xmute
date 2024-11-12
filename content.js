@@ -1,4 +1,4 @@
-const tweets = document.getElementsByClassName("r-qklmqi"),
+const tweets = document.getElementsByClassName("r-qklmqi r-1adg3ll"),
 	replyedtweets = document.getElementsByClassName("css-175oi2r r-1adg3ll r-1ny4l3l"),
 	names = document.getElementsByClassName("css-175oi2r r-zl2h9q"),
 	retweets = document.getElementsByClassName("css-1jxf684 r-8akbws r-1cwl3u0"),
@@ -16,7 +16,10 @@ let url = new URL(location.href),
 	fetchurl = [],
 	fetchani = [],
 	fetchcount = 0,
-	fetchlimit = 50;
+	fetchlimit = 60,
+	commus,
+	like,
+	pow;
 
 const comparetime = rec => {
 	if (!rec) return "none";
@@ -36,6 +39,7 @@ onload = async () => {
 	data = (await chrome.storage.local.get("key")).key;
 	userdata = (await chrome.storage.local.get("userdata")).userdata;
 	opdata = (await chrome.storage.local.get("option")).option;
+	pow = (await chrome.storage.local.get("power")).power;
 	data = data.filter(d => comparetime(d.limit) != "past");
 	userdata = userdata.filter(d => comparetime(d.limit) != "past");
 	await chrome.storage.local.set({ key: data });
@@ -43,144 +47,166 @@ onload = async () => {
 	
 	
 	setInterval(() => {
-		console.log();
-		if (opdata.trend) {
-			for (let v of document.querySelectorAll('[data-testid="trend"]')) {
-				v.remove();
-			}
-		}
-		for (let t of tweets) {
-			func1(t);
-		}
-		for (let t of replyedtweets) {
-			func1(t);
-		}
-		// リポストのみ表示
-		for (let n of names) {
-			for (let d of userdata) {
-				if (n.textContent.includes(d.name) && d.sta == "rponly") {
-					rem(n.closest(".r-qklmqi"));
-					console.log("リポスト以外削除: " + d.name);
+		if (pow) {
+			like = document.querySelectorAll('[data-testid="like"]');
+			if (opdata.block) {
+				for (let l of like) {
+					if (l.querySelector("svg").classList.value.includes("r-12c3ph5")) {
+						rem(l.closest(".r-qklmqi"));
+					}
 				}
 			}
-		}
-		// 名前削除
-		if (url.pathname == "/search" && opdata.searchnameng && query) {
-			querys = query.split(/\s/);
+			commus = document.querySelectorAll('[data-testid="birdwatch-pivot"]');
+			switch (opdata.commu) {
+				case "tx":
+					for (let c of commus) {
+						c.parentNode.querySelector('[data-testid="tweetText"]')?.parentNode.remove();
+					}
+					break;
+				case "media":
+					for (let c of commus) {
+						c.parentNode.querySelector('[data-testid="tweetText"]')?.parentNode.remove();
+						c.parentNode.querySelector(".r-14gqq1x")?.remove();
+						c.parentNode.querySelector("[aria-labelledby]")?.remove();
+					}
+					break;
+			}
+
+			if (opdata.trend) {
+				for (let v of document.querySelectorAll('[data-testid="trend"]')) {
+					v.remove();
+				}
+			}
+			for (let t of tweets) {
+				func1(t);
+			}
+			for (let t of replyedtweets) {
+				func1(t);
+			}
+			// リポストのみ表示
 			for (let n of names) {
-				if (querys.some(q => n.textContent.replace(/\s/, "").includes(q))) {
-					rem(n.closest(".r-qklmqi"));
-					console.log("名前削除: " + query);
+				for (let d of userdata) {
+					if (n.textContent.includes(d.name) && d.sta == "rponly") {
+						rem(n.closest(".r-qklmqi"));
+						console.log("リポスト以外削除: " + d.name);
+					}
 				}
 			}
-		}
-		// リポスト以外表示
-		for (let r of retweets) {
-			for (let d of userdata) {
-				if (r.parentNode.href.includes(d.name) && d.sta == "rpexcept") {
-					rem(r.closest(".r-qklmqi"));
-					console.log("リポスト削除: " + d.name);
+			// 名前削除
+			if (url.pathname == "/search" && opdata.searchnameng && query) {
+				querys = query.split(/\s/);
+				for (let n of names) {
+					if (querys.some(q => n.textContent.replace(/\s/, "").includes(q))) {
+						rem(n.closest(".r-qklmqi"));
+						console.log("名前削除: " + query);
+					}
 				}
 			}
-		}
-		for (let m of medias) {
-			// メディアポスト以外表示
-			for (let d of userdata) {
-				if (!m.closest(".r-qklmqi")) {
-					closest = "article";
-				} else {
-					closest = ".r-qklmqi";
-				}
-				if (m.closest(closest)?.textContent.includes(d.name) && d.sta == "mediaexcept") {
-					rem(m.closest(closest));
-					console.log("メディアポスト削除: " + d.name);
+			// リポスト以外表示
+			for (let r of retweets) {
+				for (let d of userdata) {
+					if (r.parentNode.href.includes(d.name) && d.sta == "rpexcept") {
+						rem(r.closest(".r-qklmqi"));
+						console.log("リポスト削除: " + d.name);
+					}
 				}
 			}
-			// メディア要素削除
-			for (let d of userdata) {
-				if (!m.closest(".r-qklmqi")) {
-					closest = "article";
-				} else {
-					closest = ".r-qklmqi";
+			for (let m of medias) {
+				// メディアポスト以外表示
+				for (let d of userdata) {
+					if (!m.closest(".r-qklmqi")) {
+						closest = "article";
+					} else {
+						closest = ".r-qklmqi";
+					}
+					if (m.closest(closest)?.textContent.includes(d.name) && d.sta == "mediaexcept") {
+						rem(m.closest(closest));
+						console.log("メディアポスト削除: " + d.name);
+					}
 				}
-				if (!m.closest(closest)) {
+				// メディア要素削除
+				for (let d of userdata) {
+					if (!m.closest(".r-qklmqi")) {
+						closest = "article";
+					} else {
+						closest = ".r-qklmqi";
+					}
+					if (!m.closest(closest)) {
+						continue;
+					}
+					if (m.closest(closest).textContent.includes(d.name) && d.sta == "mediadelete") {
+						if (m.closest(".r-kzbkwu").childNodes[1].textContent == "") {
+							rem(m.closest(closest));
+						} else {
+							rem(m);
+						}
+						console.log("メディア削除: " + d.name);
+					}
+				}
+			}
+			// ワード要素削除
+			for (let w of words) {
+				for (let d of userdata) {
+					if (!w.closest(".r-qklmqi")) {
+						closest = "article";
+					} else {
+						closest = ".r-qklmqi";
+					}
+					if (w.closest(closest)?.textContent.includes(d.name) && d.sta == "worddelete") {
+						if (w.closest(closest).getElementsByClassName("r-1867qdf r-1udh08x r-o7ynqc").length == 0) {
+							rem(w.closest(closest));
+						} else {
+							rem(w);
+						}
+						console.log("ワード削除: " + d.name);
+					}
+				}
+			}
+			if (query != new URLSearchParams(location.search).get("q")) {
+				query = new URLSearchParams(location.search).get("q");
+				if (query != null) {
+					console.log("検索単語変更 名前NG: " + query);
+				}
+			}
+			for (let r of rrlis) {
+				if (!r.closest("[aria-label]")) {
 					continue;
 				}
-				if (m.closest(closest).textContent.includes(d.name) && d.sta == "mediadelete") {
-					if (m.closest(".r-kzbkwu").childNodes[1].textContent == "") {
-						rem(m.closest(closest));
-					} else {
-						rem(m);
-					}
-					console.log("メディア削除: " + d.name);
+				if (r.closest("[aria-label]").dataset.testid == "reply" && opdata.reply) {
+					r.firstChild.textContent = "";
+				}
+				if (r.closest("[aria-label]").dataset.testid == "retweet" && opdata.repost) {
+					r.firstChild.textContent = "";
+				}
+				if (r.closest("[aria-label]").dataset.testid == "like" && opdata.like) {
+					r.firstChild.textContent = "";
+				}
+				if (r.closest("[aria-label]").href?.includes("analytics") && opdata.impre) {
+					r.firstChild.textContent = "";
+				}
+				if (r.closest("[aria-label]").dataset.testid == "bookmark" && opdata.book) {
+					r.firstChild.textContent = "";
 				}
 			}
-		}
-		// ワード要素削除
-		for (let w of words) {
-			for (let d of userdata) {
-				if (!w.closest(".r-qklmqi")) {
-					closest = "article";
-				} else {
-					closest = ".r-qklmqi";
+			for (let f of follows) {
+				if (f.parentNode.tagName != "A") {
+					continue;
 				}
-				if (w.closest(closest)?.textContent.includes(d.name) && d.sta == "worddelete") {
-					if (
-						w.closest(closest).getElementsByClassName("r-1867qdf r-1udh08x r-o7ynqc")
-							.length == 0
-					) {
-						rem(w.closest(closest));
-					} else {
-						rem(w);
-					}
-					console.log("ワード削除: " + d.name);
+				if (f.parentNode.href.includes("following") && opdata.follow) {
+					f.textContent = "";
+				}
+				if (f.parentNode.href.includes("follower") && opdata.follower) {
+					f.textContent = "";
 				}
 			}
+			for (let i of impre) {
+				if (opdata.impre) {
+					i.childNodes[1].textContent = "";
+					i.childNodes[2].textContent = "";
+				}
+			}
+			url = new URL(location.href);
 		}
-		if (query != new URLSearchParams(location.search).get("q")) {
-			query = new URLSearchParams(location.search).get("q");
-			if (query != null) {
-				console.log("検索単語変更 名前NG: " + query);
-			}
-		}
-		for (let r of rrlis) {
-			if (!r.closest("[aria-label]")) {
-				continue;
-			}
-			if (r.closest("[aria-label]").ariaLabel.includes("返信") && opdata.reply) {
-				r.firstChild.textContent = "";
-			}
-			if (r.closest("[aria-label]").ariaLabel.includes("リポスト") && opdata.repost) {
-				r.firstChild.textContent = "";
-			}
-			if (r.closest("[aria-label]").ariaLabel.includes("いいね") && opdata.like) {
-				r.firstChild.textContent = "";
-			}
-			if (r.closest("[aria-label]").ariaLabel.includes("表示") && opdata.impre) {
-				r.firstChild.textContent = "";
-			}
-			if (r.closest("[aria-label]").ariaLabel.includes("ブックマーク") && opdata.book) {
-				r.firstChild.textContent = "";
-			}
-		}
-		for (let f of follows) {
-			if (f.parentNode.tagName != "A") {
-				continue;
-			}
-			if (f.parentNode.href.includes("following") && opdata.follow) {
-				f.textContent = "";
-			}
-			if (f.parentNode.href.includes("follower") && opdata.follower) {
-				f.textContent = "";
-			}
-		}
-		for (let i of impre) {
-			if (opdata.impre) {
-				i.childNodes[1].textContent = "";
-				i.childNodes[2].textContent = "";
-			}
-		}
-		url = new URL(location.href);
 	}, opdata.interval);
 
 	console.log(`更新間隔： ${opdata.interval}ミリ秒`);
@@ -193,6 +219,7 @@ chrome.runtime.onMessage.addListener(async () => {
 		data = (await chrome.storage.local.get("key")).key;
 		userdata = (await chrome.storage.local.get("userdata")).userdata;
 		opdata = (await chrome.storage.local.get("option")).option;
+		pow = (await chrome.storage.local.get("power")).power;
 		fetchurl = [];
 		fetchani = [];
 		fetchcount = 0;
@@ -202,6 +229,12 @@ const func1 = t => {
 	for (let d of data) {
 		if (opdata.except && t.textContent.includes(query) && d.word == query) {
 			continue;
+		}
+		for (let i of t.getElementsByTagName("img")) {
+			if (i.alt.includes(d.word)) {
+				rem(t);
+				console.log("絵文字削除: " + d.word);
+			}
 		}
 		if (!d.regex) {
 			if (t.textContent.includes(d.word)) {
@@ -285,6 +318,7 @@ const getinu = async () => {
 		return func2(1);
 	}
 };
+
 const getkitune = async () => {
 	if (fetchurl.length <= fetchlimit) {
 		const fet = await (await fetch("https://randomfox.ca/floof")).json();
@@ -304,6 +338,44 @@ const getkitune = async () => {
 		return func2(2);
 	}
 };
+const getahiru = async () => {
+	if (fetchurl.length <= fetchlimit) {
+		const fet = await (await fetch("https://foodish-api.com/api/")).json();
+		if (!fet?.image) {
+			return chrome.runtime.getURL("image/error_ahiru.jpg");
+		}
+		const fet2 = await (await fetch(fet.image)).blob();
+		const url = URL.createObjectURL(fet2);
+		fetchurl.push(url);
+		fetchani.push(3);
+		return url;
+	} else {
+		if (!fetchani.some(v => v == 3)) {
+			fetchlimit += 10;
+			return await getahiru();
+		}
+		return func2(3);
+	}
+};
+const getnekogirl = async e => {
+	if (fetchurl.length <= fetchlimit) {
+		const fet = await (await fetch("https://nekos.best/api/v2/neko")).json();
+		if (!fet?.results) {
+			return chrome.runtime.getURL("image/error_neko.jpg");
+		}
+		const url = fet.results[0];
+		fetchurl.push(url);
+		fetchani.push(4);
+		return url;
+	} else {
+		if (!fetchani.some(v => v == 4)) {
+			fetchlimit += 10;
+			return await getnekogirl();
+		}
+		return func2(4);
+	}
+};
+
 const befinsert = (e, icon, name, id, date) => {
 	e.getElementsByClassName("r-16y2uox r-1wbh5a2 r-1ny4l3l")[0].innerHTML = `
     <div class="css-175oi2r">
@@ -394,7 +466,8 @@ const befinsert = (e, icon, name, id, date) => {
 </div>`;
 };
 const insert = async (e, url) => {
-	e.getElementsByClassName("css-175oi2r r-9aw3ui r-1s2bzr4")[0].innerHTML = `
+	if (typeof url == "string") {
+		e.getElementsByClassName("css-175oi2r r-9aw3ui r-1s2bzr4")[0].innerHTML = `
 	<div class="css-175oi2r r-9aw3ui">
         <div class="css-175oi2r">
             <div class="css-175oi2r">
@@ -417,14 +490,42 @@ const insert = async (e, url) => {
             </div>
         </div>
     </div>`;
+	} else {
+		const blob = await (await fetch(url.url)).blob();
+		const img = URL.createObjectURL(blob);
+		e.getElementsByClassName("css-175oi2r r-9aw3ui r-1s2bzr4")[0].innerHTML = `
+	<div class="css-175oi2r r-9aw3ui">
+        <div class="css-175oi2r">
+            <div class="css-175oi2r">
+                <div class="css-175oi2r r-1ets6dv r-1phboty r-rs99b7 r-1867qdf r-1udh08x r-o7ynqc r-6416eg r-1peqgm7 r-1ny4l3l">
+                    <div class="css-175oi2r">
+                        <div class="css-175oi2r r-16y2uox r-1pi2tsx r-13qz1uu">
+                            <a href="${url.source_url}" target="_blank" role="link" class="css-175oi2r r-1pi2tsx r-1ny4l3l r-1loqt21">
+                                <div class="css-175oi2r r-1adg3ll r-1udh08x">
+                                    <div class="r-1adg3ll r-13qz1uu" style="padding-bottom: 100%;"></div>
+                                    <div class="r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-ipm5af r-13qz1uu">
+                                        <div class="css-175oi2r r-1mlwlqe r-1udh08x r-417010 r-1p0dtai r-1d2f490 r-u8s1d r-zchlnj r-ipm5af" style="margin: 0px;">
+                                            <div class="css-175oi2r r-1niwhzg r-vvn4in r-u6sd8q r-1p0dtai r-1pi2tsx r-1d2f490 r-u8s1d r-zchlnj r-ipm5af r-13qz1uu r-1wyyakw r-4gszlv" style="background-image: url(&quot;${img}&quot;);"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><a href="${url.artist_href}" style="color: #666">by ${url.artist_name}</a>`;
+	}
+	
 };
 const rem = async e => {
-	if (!opdata.neko && !opdata.inu && !opdata.kitune) {
+	if (!opdata.neko && !opdata.inu && !opdata.kitune && !opdata.ahiru && !opdata.nekogirl) {
 		e.remove();
 		return;
 	}
 	while (true) {
-		const dice = Math.round(Math.random() * 2);
+		const dice = Math.round(Math.random() * 4);
 		if (opdata.neko && dice == 0) {;
 			befinsert(e, chrome.runtime.getURL("image/neko.jpg"), "neko", "cataas", "2月22日");
 			insert(e, await getneko());
@@ -440,10 +541,16 @@ const rem = async e => {
 			insert(e, await getkitune());
 			break;
 		}
-		// if (opdata.ahiru && dice == 3) {
-		// 	befinsert(e, chrome.runtime.getURL("image/ahiru.jpg"), "ahiru", "ahiru", "1月1日");
-		// 	insert(e, await getahiru());
-		// 	break;
-		// }
+		if (opdata.ahiru && dice == 3) {
+			const date = new Date();
+			befinsert(e, chrome.runtime.getURL("image/ahiru.jpg"), "food", "foodish_api", `${date.getMonth() + 1}月${date.getDate()}日`);
+			insert(e, await getahiru());
+			break;
+		}
+		if (opdata.nekogirl && dice == 4) {
+			befinsert(e, chrome.runtime.getURL("image/nekogirl.jpg"), "nekogirl", "nekosbestAPI", "2月22日");
+			insert(e, await getnekogirl());
+			break;
+		}
 	}
 }

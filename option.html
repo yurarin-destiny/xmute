@@ -49,7 +49,7 @@
         td:nth-last-child(-n+2) {
             padding-left: 0px;
         }
-        td:nth-child(1) { width: 180px; }
+        td:nth-child(1) { width: 100%; }
         td:nth-child(2) { width: 140px; }
         thead { font-size: 14px; }
         tbody tr:nth-child(odd) {
@@ -94,13 +94,25 @@
         <div class="option">
         更新間隔<input type="number" id="interval" min="50">ミリ秒<br>
         <label><input type="checkbox" id="checknameng">
-            検索単語が名前に含まれるツイートを非表示</label><br>
+            検索単語が名前に含まれるポストを非表示</label><br>
         <label><input type="checkbox" id="checkreflesh">
             設定変更後にXのタブを更新する</label><br>
         <label><input type="checkbox" id="checktrend">
             トレンドを表示しない</label><br>
         <label><input type="checkbox" id="checkexcept">
             NGワード検索時そのワードのみ除外する</label><br>
+        <label><input type="checkbox" id="checkblock">
+            ブロックしてきたアカウントのポストを非表示</label><br>
+        <fieldset>
+            <legend>コミュニティノートがつけられたポスト非表示</legend>
+            <div>
+                <form id="commu">
+                <label><input type="radio" name="commu" value="none" checked>しない</label>
+                <label><input type="radio" name="commu" value="tx">文章のみ</label>
+                <label><input type="radio" name="commu" value="media">文章とメディア</label>
+                </form>
+            </div>
+        </fieldset>
         <fieldset>
             <legend>数字を非表示にする</legend>
             <div>
@@ -119,7 +131,8 @@
                 <label><input type="checkbox" id="checkneko">ねこ</label>
                 <label><input type="checkbox" id="checkinu">いぬ</label>
                 <label><input type="checkbox" id="checkkitune">きつね</label>
-                <label style="color: #ccc"><input type="checkbox" id="checkahiru" disabled>アヒル（予定）</label>
+                <label><input type="checkbox" id="checkahiru">食べ物</label>
+                <label><input type="checkbox" id="checknekogirl">猫耳女子</label>
             </div>
         </fieldset>
         <button id="save">保存</button>

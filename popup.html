@@ -16,11 +16,19 @@
 		input#lim { width: 60px; }
 		p { white-space: nowrap; }
 		select { margin-bottom: 3px; }
+		.dimmed { opacity: 0.4; pointer-events: none;}
 	</style>
 </head>
 
 <body>
-	<span class="s1">非表示発射のド迫力X</span>1.0.6
+	<span class="s1">非表示発射のド迫力X</span>
+	<span id="ver"></span>
+	<span style="float: right;">
+		<label>
+			<input type="checkbox" id="power" checked> ON
+		</label>
+	</span>
+	<div id="conte">
 	<p>
 		<label>
 		<input type="radio" name="radio" value="word" checked>非表示ワード</label>
@@ -45,6 +53,7 @@
 	</p>
 	<p><button id="btn1">発射</button><button id="btn2">オプション</button></p><br>
 	<div id="info"></div>
+	</div>
 	<script src="popup.js"></script>
 </body>
 

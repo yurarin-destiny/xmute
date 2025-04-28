@@ -16,9 +16,10 @@ let url = new URL(location.href),
 	fetchurl = [],
 	fetchani = [],
 	fetchcount = 0,
-	fetchlimit = 60,
+	fetchlimit = 100,
 	commus,
 	like,
+	palo,
 	pow;
 
 const comparetime = rec => {
@@ -35,6 +36,7 @@ const comparetime = rec => {
 	else return "past";
 };
 
+
 onload = async () => {
 	data = (await chrome.storage.local.get("key")).key;
 	userdata = (await chrome.storage.local.get("userdata")).userdata;
@@ -44,15 +46,55 @@ onload = async () => {
 	userdata = userdata.filter(d => comparetime(d.limit) != "past");
 	await chrome.storage.local.set({ key: data });
 	await chrome.storage.local.set({ userdata });
-	
-	
+
+	// const observerSetupInterval = setInterval(() => {
+	// 	const targetNode = document.querySelector('[data-testid="tweetText"]');
+	// 	if (targetNode) {
+	// 		clearInterval(observerSetupInterval);
+	// 		//console.log(targetNode.innerText,"がありました");
+	// 	}
+	// }, 200);
+
+	// setTimeout(() => {
+	// 	const bkbtns = document.querySelectorAll('[data-testid="bookmark"]');
+	// 	for (let b of bkbtns) {
+	// 		b.onauxclick = () => {
+	// 			const post = b.closest(".r-16y2uox .r-1wbh5a2");
+	// 			const icon = post.querySelector("img.css-9pa8cd").src.replace(/_normal/, "");
+	// 			const name = post.querySelector('[data-testid="User-Name"]').firstChild;
+	// 			const userid = name.querySelector("a").href.replace("https://x.com/", "@");
+	// 			const jst = new Date(post.querySelector("time").dateTime);
+	// 			const time = `${jst.getFullYear()}.${String(jst.getMonth() + 1).padStart(2, "0")}.${String(jst.getDate()).padStart(2, "0")} ${String(jst.getHours()).padStart(2, "0")}:${String(jst.getMinutes()).padStart(2, "0")}:${String(jst.getSeconds()).padStart(2, "0")}`;
+	// 			const text = post.querySelector('[data-testid="tweetText"]');
+	// 			const photo = post.querySelectorAll('[data-testid="tweetPhoto"]');
+	// 			const quote = post.querySelector(".r-rs99b7 .r-o7ynqc .r-6416eg");
+	// 			const card = post.querySelector('[data-testid="card.wrapper"]');
+	// 			const more = post.querySelector('[data-testid="tweet-text-show-more-link"]');
+
+	// 			console.log(icon);
+	// 			console.log(name);
+	// 			console.log(userid);
+	// 			console.log(time);
+	// 			console.log(text);
+	// 			console.log(...photo);
+	// 			console.log(quote);
+	// 			console.log(card);
+	// 			console.log(more);
+	// 			if (more) {
+	// 				open(more.href, "_blank");
+	// 			}
+	// 		};
+	// 	}
+	// 	//console.log("OK");
+	// }, 4000);
+
 	setInterval(() => {
 		if (pow) {
 			like = document.querySelectorAll('[data-testid="like"]');
 			if (opdata.block) {
 				for (let l of like) {
 					if (l.querySelector("svg").classList.value.includes("r-12c3ph5")) {
-						rem(l.closest(".r-qklmqi"));
+						rem(l.closest("article"));
 					}
 				}
 			}
@@ -71,7 +113,12 @@ onload = async () => {
 					}
 					break;
 			}
-
+			palo = document.querySelectorAll('[href="https://help.x.com/rules-and-policies/authenticity"]');
+			if (opdata.palody) {
+				for (let p of palo) {
+					p.parentNode.remove();
+				}
+			}
 			if (opdata.trend) {
 				for (let v of document.querySelectorAll('[data-testid="trend"]')) {
 					v.remove();
@@ -87,8 +134,8 @@ onload = async () => {
 			for (let n of names) {
 				for (let d of userdata) {
 					if (n.textContent.includes(d.name) && d.sta == "rponly") {
-						rem(n.closest(".r-qklmqi"));
-						console.log("リポスト以外削除: " + d.name);
+						rem(n.closest("article"));
+						//console.log("リポスト以外削除: " + d.name);
 					}
 				}
 			}
@@ -97,8 +144,9 @@ onload = async () => {
 				querys = query.split(/\s/);
 				for (let n of names) {
 					if (querys.some(q => n.textContent.replace(/\s/, "").includes(q))) {
-						rem(n.closest(".r-qklmqi"));
-						console.log("名前削除: " + query);
+						//console.log("n:", n.closest("article"));
+						rem(n.closest("article"));
+						//console.log(`名前削除: ${query} ${n.textContent.replace(/·.*/, "")}`);
 					}
 				}
 			}
@@ -106,22 +154,22 @@ onload = async () => {
 			for (let r of retweets) {
 				for (let d of userdata) {
 					if (r.parentNode.href.includes(d.name) && d.sta == "rpexcept") {
-						rem(r.closest(".r-qklmqi"));
-						console.log("リポスト削除: " + d.name);
+						rem(r.closest("article"));
+						//console.log("リポスト削除: " + d.name);
 					}
 				}
 			}
 			for (let m of medias) {
 				// メディアポスト以外表示
 				for (let d of userdata) {
-					if (!m.closest(".r-qklmqi")) {
+					if (!m.closest("article")) {
 						closest = "article";
 					} else {
-						closest = ".r-qklmqi";
+						closest = "article";
 					}
 					if (m.closest(closest)?.textContent.includes(d.name) && d.sta == "mediaexcept") {
 						rem(m.closest(closest));
-						console.log("メディアポスト削除: " + d.name);
+						//console.log("メディアポスト削除: " + d.name);
 					}
 				}
 				// メディア要素削除
@@ -140,7 +188,7 @@ onload = async () => {
 						} else {
 							rem(m);
 						}
-						console.log("メディア削除: " + d.name);
+						//console.log("メディア削除: " + d.name);
 					}
 				}
 			}
@@ -158,7 +206,7 @@ onload = async () => {
 						} else {
 							rem(w);
 						}
-						console.log("ワード削除: " + d.name);
+						//console.log("ワード削除: " + d.name);
 					}
 				}
 			}
@@ -212,19 +260,111 @@ onload = async () => {
 	console.log(`更新間隔： ${opdata.interval}ミリ秒`);
 };
 
-chrome.runtime.onMessage.addListener(async () => {
-	if (opdata.reflesh) {
-		location.reload();
-	} else {
-		data = (await chrome.storage.local.get("key")).key;
-		userdata = (await chrome.storage.local.get("userdata")).userdata;
-		opdata = (await chrome.storage.local.get("option")).option;
-		pow = (await chrome.storage.local.get("power")).power;
-		fetchurl = [];
-		fetchani = [];
-		fetchcount = 0;
+chrome.runtime.onMessage.addListener(async message => {
+	if (message == "op") {
+		if (opdata.reflesh) {
+			location.reload();
+		} else {
+			data = (await chrome.storage.local.get("key")).key;
+			userdata = (await chrome.storage.local.get("userdata")).userdata;
+			opdata = (await chrome.storage.local.get("option")).option;
+			pow = (await chrome.storage.local.get("power")).power;
+			fetchurl = [];
+			fetchani = [];
+			fetchcount = 0;
+		}
+	}
+	if (message == "image") {
+		showCustomConfirm().then(result => {
+			if (result) {
+				alert("You clicked Yes!");
+			}
+		});
 	}
 });
+// カスタムconfirmダイアログを表示
+const showCustomConfirm = () => {
+	return new Promise(resolve => {
+		const existingDialog = document.getElementById("customConfirm");
+		if (existingDialog) {
+			existingDialog.remove();
+			document.getElementById("st").remove();
+		}
+    	// ダイアログのHTMLを作成
+		const confirmDialog = document.createElement('div');
+		confirmDialog.id = 'customConfirm';
+		confirmDialog.innerHTML = `
+			<div class="modal-content">
+			<p>Are you sure you want to proceed with this action?</p>
+			<button id="confirmYesBtn">Yes</button>
+			<button id="confirmNoBtn">No</button>
+			</div>`;
+
+		// ダイアログをDOMに追加
+		document.body.appendChild(confirmDialog);
+
+		// CSSを動的に追加
+		addDynamicStyles();
+
+		// Yesボタンのクリック処理
+		document.getElementById('confirmYesBtn').onclick = () => {
+			confirmDialog.style.display = 'none';
+			resolve(true);  // Yesが選択された場合
+		};
+
+		// Noボタンのクリック処理
+		document.getElementById("confirmNoBtn").onclick = () => {
+			confirmDialog.style.display = "none";
+			resolve(false); // Noが選択された場合
+		};
+	});
+}
+// 動的にCSSを追加
+const addDynamicStyles = () => {
+	const style = document.createElement('style');
+	style.id = "st";
+	style.innerHTML = `
+		#customConfirm {
+			display: flex;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+			justify-content: center;
+			align-items: center;
+			z-index: 9999;
+		}
+		.modal-content {
+			background: white;
+			padding: 20px;
+			border-radius: 5px;
+			text-align: center;
+			width: 300px;
+		}
+		button {
+			margin: 10px;
+			padding: 10px;
+			font-size: 16px;
+			cursor: pointer;
+			border: none;
+			border-radius: 5px;
+		}
+		#confirmYesBtn {
+			background-color: green;
+			color: white;
+		}
+		#confirmNoBtn {
+			background-color: red;
+			color: white;
+		}
+		button:hover {
+			opacity: 0.8;
+		}`;
+	document.head.appendChild(style);
+}
+
 const func1 = t => {
 	for (let d of data) {
 		if (opdata.except && t.textContent.includes(query) && d.word == query) {
@@ -233,18 +373,18 @@ const func1 = t => {
 		for (let i of t.getElementsByTagName("img")) {
 			if (i.alt.includes(d.word)) {
 				rem(t);
-				console.log("絵文字削除: " + d.word);
+				//console.log("絵文字削除: " + d.word);
 			}
 		}
 		if (!d.regex) {
 			if (t.textContent.includes(d.word)) {
+				//console.log(`ワード削除: ${d.word}\n${t.textContent.replace(/\n+/g, " ")}`);
 				rem(t);
-				console.log("ワード削除: " + d.word);
 			}
 		} else {
-			if (new RegExp(d.word).test(t.textContent)) {
+			if (new RegExp(d.word,"m").test(t.textContent)) {
+				//console.log(`正規ワード削除: ${d.word}\n${t.textContent.replace(/\n+/g, " ")}`);
 				rem(t);
-				console.log("ワード削除: " + d.word);
 			}
 		}
 	}
@@ -255,7 +395,7 @@ const func1 = t => {
 			d.sta == "mediaonly" &&
 			t.getElementsByClassName("r-1867qdf r-1udh08x r-o7ynqc").length == 0
 		) {
-			t.closest(".r-qklmqi").remove();
+			t.closest("article").remove();
 			console.log("メディアポスト以外削除: " + d.name);
 		}
 	}
@@ -521,6 +661,7 @@ const insert = async (e, url) => {
 };
 const rem = async e => {
 	if (!opdata.neko && !opdata.inu && !opdata.kitune && !opdata.ahiru && !opdata.nekogirl) {
+		//console.log("e: ",e);
 		e.remove();
 		return;
 	}

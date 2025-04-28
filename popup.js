@@ -99,7 +99,7 @@ power.onclick = async () => {
 	await chrome.tabs.query({}, tabs => {
 		for (t of tabs) {
 			if (t.url?.includes("https://x.com")) {
-				chrome.tabs.sendMessage(t.id, "");
+				chrome.tabs.sendMessage(t.id, "op");
 			}
 		}
 	});
@@ -216,7 +216,7 @@ btn1.onclick = async () => {
 			info.innerText = "入力してください";
 			return;
 		}
-		if (/[^0-9a-zA-Z_]/.test(val)) {
+		if (/[^0-9a-zA-Z_]/.test(val)) { // /^\w/
 			info.innerText = "英数字（ _ を含む）IDを入力してください";
 			return;
 		}
@@ -245,7 +245,7 @@ document.onvisibilitychange = async() => {
 		for (t of tabs) {
 			if (t.url && change) {
 				if (t.url.includes("https://x.com")) {
-					chrome.tabs.sendMessage(t.id, "");
+					chrome.tabs.sendMessage(t.id, "op");
 				}
 				if (t.url.includes("option.html")) {
 					chrome.tabs.sendMessage(t.id, "");

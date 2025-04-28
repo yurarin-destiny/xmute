@@ -10,6 +10,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 			trend: false,
 			except: false,
 			block: false,
+			palody: false,
 			commu: "none",
 			reply: false,
 			repost: false,
@@ -35,10 +36,20 @@ chrome.runtime.onInstalled.addListener(async () => {
 		title: "「%s」を非表示発射のド迫力",
 		contexts: ["selection"],
 	});
+	chrome.contextMenus.create({
+		id: "image",
+		title: "この画像を非表示発射のド迫力",
+		contexts: ["image"],
+	});
 });
 
-chrome.contextMenus.onClicked.addListener(info => {
-	const select = info.selectionText;
-	chrome.storage.local.set({ select });
-	chrome.action.openPopup();
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+	if (info.menuItemId == "pop") {
+		const select = info.selectionText;
+		chrome.storage.local.set({ select });
+		chrome.action.openPopup();
+	}
+	if (info.menuItemId == "image") {
+		chrome.tabs.sendMessage(tab.id, "image");
+	}
 });

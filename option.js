@@ -10,6 +10,7 @@ const info = document.getElementById("info"),
 	checktrend = document.getElementById("checktrend"),
 	checkexcept = document.getElementById("checkexcept"),
 	checkblock = document.getElementById("checkblock"),
+	checkpalody = document.getElementById("checkpalody"),
 	radcommu = document.getElementById("commu"),
 	checkreply = document.getElementById("checkreply"),
 	checkrepost = document.getElementById("checkrepost"),
@@ -97,7 +98,7 @@ const write = async () => {
 	} else {
 		res += "<table><thead><tr><td>ワード</td><td>期限</td><td></td></tr></thead><tbody>";
 		data.forEach((d, i) => {
-			if (d.regex) res += `<tr><td><b class="ngword">/${d.word}/</b></td>`;
+			if (d.regex) res += `<tr><td><b class="ngword">${d.word}</b></td>`;
 			else res += `<tr><td class="ngword">${d.word}</td>`;
 			if (d.limit) res += `<td>${d.limit}</td>`;
 			else res += "<td>-</td>";
@@ -225,6 +226,7 @@ const write = async () => {
 	checktrend.checked = opdata.trend;
 	checkexcept.checked = opdata.except;
 	checkblock.checked = opdata.block;
+	checkpalody.checked = opdata.palody;
 	radcommu.commu.value = opdata.commu;
 	checkreply.checked = opdata.reply;
 	checkrepost.checked = opdata.repost;
@@ -254,6 +256,7 @@ save.onclick = async () => {
 		trend: checktrend.checked,
 		except: checkexcept.checked,
 		block: checkblock.checked,
+		palody: checkpalody.checked,
 		commu: radcommu.commu.value,
 		reply: checkreply.checked,
 		repost: checkrepost.checked,
@@ -319,14 +322,14 @@ reader.onload = async () => {
 	if (
 		confirm(
 			"以下の設定を読み込みます。\n\n" +
-			`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
-			`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒、 検索単語名前非表示: ${bool(file[2].searchnameng)}\n` +
-			`閉じたときの自動更新：${bool(file[2].reflesh)}、 トレンド消去：${bool(file[2].trend)}、 NGワード検索時除外：${bool(file[2].except)}\n` +
-			`ブロックしてきたアカウントのポスト非表示：${bool(file[2].block)}\n` +
-			`コミュニティノートポスト：${ commuval(file[2].commu)}\n` +
-			`リプ：${bool(file[2].reply)}、 リポスト：${bool(file[2].reply)}、 いいね：${bool(file[2].reply)}、 インプレ：${bool(file[2].reply)}\n` +
-			`ブックマーク：${bool(file[2].reply)}、 フォロー：${bool(file[2].follow)}、 フォロワー：${bool(file[2].follower)}\n` +
-			`ねこ：${bool(file[2].neko)}、 いぬ：${bool(file[2].inu)}、 きつね：${bool(file[2].kitune)}、 食べ物：${bool(file[2].ahiru)}、 猫耳女子：${bool(file[2].nekogirl)}`
+				`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
+				`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒、 検索単語名前非表示: ${bool(file[2].searchnameng)}\n` +
+				`閉じたときの自動更新：${bool(file[2].reflesh)}、 トレンド消去：${bool(file[2].trend)}、 NGワード検索時除外：${bool(file[2].except)}\n` +
+				`ブロックしてきたアカウントのポスト非表示：${bool(file[2].block)}、 パロディ表記消去：${bool(file[2].palody)}\n` +
+				`コミュニティノートポスト：${commuval(file[2].commu)}\n` +
+				`リプ：${bool(file[2].reply)}、 リポスト：${bool(file[2].reply)}、 いいね：${bool(file[2].reply)}、 インプレ：${bool(file[2].reply)}\n` +
+				`ブックマーク：${bool(file[2].reply)}、 フォロー：${bool(file[2].follow)}、 フォロワー：${bool(file[2].follower)}\n` +
+				`ねこ：${bool(file[2].neko)}、 いぬ：${bool(file[2].inu)}、 きつね：${bool(file[2].kitune)}、 食べ物：${bool(file[2].ahiru)}、 猫耳女子：${bool(file[2].nekogirl)}`
 		)
 	) {
 		await chrome.storage.local.set({ key: file[0] });
@@ -350,7 +353,7 @@ const changefun = () => {
 document.onvisibilitychange = () => {
 	if (change && tid != undefined) {
 		console.log(tid);
-		chrome.tabs.sendMessage(tid, "");
+		chrome.tabs.sendMessage(tid, "op");
 	}
 	change = false;
 };
@@ -383,7 +386,11 @@ ps1.innerText = `使用している画像API
 	・現代の JavaScript チュートリアル
 	・Let'sプログラミング
 	`;
-ps2.innerText = `(1.0.8)
+ps2.innerText = `(1.0.9)
+	・X表示仕様変更のため、名前に検索ワードがあると表示されるのを修正。
+	・パロディアカウントの文字列を非表示にできるようにした。
+	
+	(1.0.8)
 	・絵文字に対応。
 	・コミュニティノートのメディアが非表示にできないのを修正。
 	・ポップアップ右上をOFFで薄くなるようにした。

@@ -11,6 +11,7 @@ const info = document.getElementById("info"),
 	checkexcept = document.getElementById("checkexcept"),
 	checkblock = document.getElementById("checkblock"),
 	checkpalody = document.getElementById("checkpalody"),
+	checkbadge = document.getElementById("checkbadge"),
 	radcommu = document.getElementById("commu"),
 	checkreply = document.getElementById("checkreply"),
 	checkrepost = document.getElementById("checkrepost"),
@@ -227,6 +228,7 @@ const write = async () => {
 	checkexcept.checked = opdata.except;
 	checkblock.checked = opdata.block;
 	checkpalody.checked = opdata.palody;
+	checkbadge.checked = opdata.badge;
 	radcommu.commu.value = opdata.commu;
 	checkreply.checked = opdata.reply;
 	checkrepost.checked = opdata.repost;
@@ -257,6 +259,7 @@ save.onclick = async () => {
 		except: checkexcept.checked,
 		block: checkblock.checked,
 		palody: checkpalody.checked,
+		badge: checkbadge.checked,
 		commu: radcommu.commu.value,
 		reply: checkreply.checked,
 		repost: checkrepost.checked,
@@ -325,7 +328,7 @@ reader.onload = async () => {
 				`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
 				`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒、 検索単語名前非表示: ${bool(file[2].searchnameng)}\n` +
 				`閉じたときの自動更新：${bool(file[2].reflesh)}、 トレンド消去：${bool(file[2].trend)}、 NGワード検索時除外：${bool(file[2].except)}\n` +
-				`ブロックしてきたアカウントのポスト非表示：${bool(file[2].block)}、 パロディ表記消去：${bool(file[2].palody)}\n` +
+				`ブロックしてきたアカウントのポスト非表示：${bool(file[2].block)}、 パロディ表記消去：${bool(file[2].palody)}、 通知バッジ消去：${bool(file[2].badge)}\n` +
 				`コミュニティノートポスト：${commuval(file[2].commu)}\n` +
 				`リプ：${bool(file[2].reply)}、 リポスト：${bool(file[2].reply)}、 いいね：${bool(file[2].reply)}、 インプレ：${bool(file[2].reply)}\n` +
 				`ブックマーク：${bool(file[2].reply)}、 フォロー：${bool(file[2].follow)}、 フォロワー：${bool(file[2].follower)}\n` +
@@ -386,7 +389,10 @@ ps1.innerText = `使用している画像API
 	・現代の JavaScript チュートリアル
 	・Let'sプログラミング
 	`;
-ps2.innerText = `(1.0.9)
+ps2.innerText = `(1.1.0)
+	・通知バッジを消せるようにし、PC版はタイトルに通知の数が出ないようできるようになった。
+	
+	(1.0.9)
 	・X表示仕様変更のため、名前に検索ワードがあると表示されるのを修正。
 	・パロディアカウントの文字列を非表示にできるようにした。
 	

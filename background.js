@@ -11,6 +11,7 @@ chrome.runtime.onInstalled.addListener(async () => {
 			except: false,
 			block: false,
 			palody: false,
+			badge: false,
 			commu: "none",
 			reply: false,
 			repost: false,

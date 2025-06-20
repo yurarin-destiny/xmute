@@ -6,7 +6,8 @@ const tweets = document.getElementsByClassName("r-qklmqi r-1adg3ll"),
 	words = document.getElementsByClassName("r-16dba41 r-bnwqim"),
 	rrlis = document.getElementsByClassName("css-175oi2r r-xoduu5 r-1udh08x"),
 	impre = document.getElementsByClassName("r-18u37iz r-1wbh5a2 r-1471scf"),
-	follows = document.getElementsByClassName("r-1b43r93 r-1cwl3u0 r-b88u0q");
+	follows = document.getElementsByClassName("r-1b43r93 r-1cwl3u0 r-b88u0q"),
+	badge = document.getElementsByClassName("r-56xrmm r-16dba41 r-1awozwy");
 let url = new URL(location.href),
 	query = new URLSearchParams(location.search).get("q"),
 	querys,
@@ -20,7 +21,8 @@ let url = new URL(location.href),
 	commus,
 	like,
 	palo,
-	pow;
+	pow,
+	title;
 
 const comparetime = rec => {
 	if (!rec) return "none";
@@ -90,6 +92,16 @@ onload = async () => {
 
 	setInterval(() => {
 		if (pow) {
+			title = document.title;
+			console.log("title: ", title);
+			console.log(/\(\d+\+?\)/g.test(title));
+			if (opdata.badge && /\(\d+\+?\)/g.test(title)) {
+				document.title = title.replace(/\(\d+\+?\)/g, "").trim();
+				while (badge.length > 0) {
+					badge[0].parentNode.removeChild(badge[0]);
+				}
+			}
+						
 			like = document.querySelectorAll('[data-testid="like"]');
 			if (opdata.block) {
 				for (let l of like) {

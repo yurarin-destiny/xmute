@@ -150,17 +150,6 @@ onload = async () => {
 					}
 				}
 			}
-			// 名前削除
-			if (url.pathname == "/search" && opdata.searchnameng && query) {
-				querys = query.split(/\s/);
-				for (let n of names) {
-					if (querys.some(q => n.textContent.replace(/\s/, "").includes(q))) {
-						//console.log("n:", n.closest("article"));
-						rem(n.closest("article"));
-						//console.log(`名前削除: ${query} ${n.textContent.replace(/·.*/, "")}`);
-					}
-				}
-			}
 			// リポスト以外表示
 			for (let r of retweets) {
 				for (let d of userdata) {

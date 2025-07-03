@@ -5,7 +5,6 @@ chrome.runtime.onInstalled.addListener(async () => {
 			hide: false,
 			hide2: false,
 			interval: 250,
-			searchnameng: true,
 			reflesh: false,
 			trend: false,
 			except: false,

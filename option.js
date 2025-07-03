@@ -5,7 +5,6 @@ const info = document.getElementById("info"),
 	del2s = document.getElementsByClassName("del2"),
 	user = document.getElementById("user"),
 	intervaltx = document.getElementById("interval"),
-	checknameng = document.getElementById("checknameng"),
 	checkreflesh = document.getElementById("checkreflesh"),
 	checktrend = document.getElementById("checktrend"),
 	checkexcept = document.getElementById("checkexcept"),
@@ -222,7 +221,6 @@ const write = async () => {
 		if (opdata.hide2) hideid();
 	}
 	intervaltx.value = opdata.interval;
-	checknameng.checked = opdata.searchnameng;
 	checkreflesh.checked = opdata.reflesh;
 	checktrend.checked = opdata.trend;
 	checkexcept.checked = opdata.except;
@@ -253,7 +251,6 @@ save.onclick = async () => {
 		hide: checkhide?.checked,
 		hide2: checkhide2?.checked,
 		interval: intervaltx.value,
-		searchnameng: checknameng.checked,
 		reflesh: checkreflesh.checked,
 		trend: checktrend.checked,
 		except: checkexcept.checked,
@@ -326,7 +323,7 @@ reader.onload = async () => {
 		confirm(
 			"以下の設定を読み込みます。\n\n" +
 				`登録ワード数: ${file[0].length}、 登録ユーザー数: ${file[1].length}\n` +
-				`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒、 検索単語名前非表示: ${bool(file[2].searchnameng)}\n` +
+				`ワードを伏せる: ${bool(file[2].hide)}、 IDを伏せる: ${bool(file[2].hide2)}、 更新間隔: ${file[2].interval}ミリ秒\n` +
 				`閉じたときの自動更新：${bool(file[2].reflesh)}、 トレンド消去：${bool(file[2].trend)}、 NGワード検索時除外：${bool(file[2].except)}\n` +
 				`ブロックしてきたアカウントのポスト非表示：${bool(file[2].block)}、 パロディ表記消去：${bool(file[2].palody)}、 通知バッジ消去：${bool(file[2].badge)}\n` +
 				`コミュニティノートポスト：${commuval(file[2].commu)}\n` +
@@ -391,6 +388,7 @@ ps1.innerText = `使用している画像API
 	`;
 ps2.innerText = `(1.1.0)
 	・通知バッジを消せるようにし、PC版はタイトルに通知の数が出ないようできるようになった。
+	・検索仕様変更のため、名前に検索ワードがある場合の非表示機能を消去。
 	
 	(1.0.9)
 	・X表示仕様変更のため、名前に検索ワードがあると表示されるのを修正。
